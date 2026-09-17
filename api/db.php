@@ -7,11 +7,18 @@
 
 // CONFIGURAÇÃO DO BANCO DE DADOS
 class db {
-    public static $db_server = "localhost"; // Geralmente localhost
-    public static $db_db     = "marketpl_ml002";   // Nome do banco de dados
-    public static $db_user   = "marketpl_ml002";      // Usuário do banco
-    public static $db_pass   = "ycHh2KVsMRRqDKY5QU4y";          // Senha do banco
+    public static $db_server = "localhost"; // Local fallback
+    public static $db_db     = "marketpl_ml002";   // Local fallback
+    public static $db_user   = "marketpl_ml002";      // Local fallback
+    public static $db_pass   = "ycHh2KVsMRRqDKY5QU4y";          // Local fallback
 }
+
+// Sobrescreve com as variáveis de ambiente (Ex: Railway, Heroku, Docker)
+$host     = getenv('MYSQLHOST') ?: db::$db_server;
+$user     = getenv('MYSQLUSER') ?: db::$db_user;
+$password = getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : db::$db_pass;
+$database = getenv('MYSQLDATABASE') ?: db::$db_db;
+$port     = getenv('MYSQLPORT') ?: 3306;
 
 // Desativar exceções do MySQLi (evita erro 500 fatal no PHP 8.1+)
 if (function_exists('mysqli_report')) {
@@ -19,7 +26,7 @@ if (function_exists('mysqli_report')) {
 }
 
 // Tentar conectar
-$conn = @mysqli_connect(db::$db_server, db::$db_user, db::$db_pass, db::$db_db);
+$conn = @mysqli_connect($host, $user, $password, $database, $port);
 
 // Verificar se a conexão falhou
 if (!$conn) { 
