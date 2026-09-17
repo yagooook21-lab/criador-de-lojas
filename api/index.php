@@ -261,6 +261,16 @@ switch($acao){
             mysqli_query($conn, "UPDATE online SET etapa='$etapa', time='$tempo', hora='$hora', useragent='$ua', cidade='$cidade', estado='$estado', situacao='ativo' WHERE ip='$ip'");
         } else {
             mysqli_query($conn, "INSERT INTO online (ip, useragent, etapa, cidade, estado, dispositivo, hora, time, situacao) VALUES ('$ip', '$ua', '$etapa', '$cidade', '$estado', '$dispositivo', '$hora', '$tempo', 'ativo')");
+            
+            // Insert into specific metric tables for historical tracking
+            if ($dispositivo === 'mobile') {
+                mysqli_query($conn, "INSERT INTO mobile (time) VALUES ('" . time() . "')");
+            } elseif ($dispositivo === 'desktop') {
+                mysqli_query($conn, "INSERT INTO desktop (time) VALUES ('" . time() . "')");
+            }
+            if (stripos($ua, 'bot') !== false || stripos($ua, 'spider') !== false) {
+                mysqli_query($conn, "INSERT INTO bot (time) VALUES ('" . time() . "')");
+            }
         }
         echo "ok";
     break;
