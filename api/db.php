@@ -14,11 +14,11 @@ class db {
 }
 
 // Sobrescreve com as variáveis de ambiente (Ex: Railway, Heroku, Docker)
-$host     = getenv('MYSQLHOST') ?: db::$db_server;
-$user     = getenv('MYSQLUSER') ?: db::$db_user;
-$password = getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : db::$db_pass;
-$database = getenv('MYSQLDATABASE') ?: db::$db_db;
-$port     = getenv('MYSQLPORT') ?: 3306;
+$host     = !empty(getenv('MYSQLHOST')) ? getenv('MYSQLHOST') : db::$db_server;
+$user     = !empty(getenv('MYSQLUSER')) ? getenv('MYSQLUSER') : db::$db_user;
+$password = !empty(getenv('MYSQLPASSWORD')) ? getenv('MYSQLPASSWORD') : db::$db_pass;
+$database = !empty(getenv('MYSQLDATABASE')) ? getenv('MYSQLDATABASE') : db::$db_db;
+$port     = !empty(getenv('MYSQLPORT')) ? getenv('MYSQLPORT') : 3306;
 
 // Desativar exceções do MySQLi (evita erro 500 fatal no PHP 8.1+)
 if (function_exists('mysqli_report')) {
