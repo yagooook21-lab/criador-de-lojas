@@ -7,10 +7,10 @@
 
 // CONFIGURAÇÃO DO BANCO DE DADOS
 class db {
-    public static $db_server = "localhost"; // Local fallback
-    public static $db_db     = "marketpl_ml002";   // Local fallback
-    public static $db_user   = "marketpl_ml002";      // Local fallback
-    public static $db_pass   = "ycHh2KVsMRRqDKY5QU4y";          // Local fallback
+    public static $db_server = "mysql.railway.internal"; // Railway Internal Host
+    public static $db_db     = "railway";   // Railway Database
+    public static $db_user   = "root";      // Railway User
+    public static $db_pass   = "LRhSagCkygSWvUBTAKBtGZSIuSaxTMnh";          // Railway Password
 }
 
 // Sobrescreve com as variáveis de ambiente (Ex: Railway, Heroku, Docker)
