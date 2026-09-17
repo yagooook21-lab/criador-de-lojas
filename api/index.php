@@ -89,7 +89,7 @@ switch($acao){
             }
         }
 
-        $ip_raw = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $ip_raw = get_real_ip() ?? '127.0.0.1';
         $ip_b64 = base64_encode($ip_raw);
 
         // Guardar na sessão para uso imediato em payment e gerarpix
@@ -145,7 +145,7 @@ switch($acao){
         $total      = addslashes($_POST['total'] ?? $_SESSION['checkout_total'] ?? '');
         $prod_cod   = addslashes($_POST['produto_codigo'] ?? ($_POST['codigo'] ?? ''));
         $prod_nome  = addslashes($_POST['produto_nome'] ?? '');
-        $ip_raw     = $_SERVER['REMOTE_ADDR'];
+        $ip_raw     = get_real_ip();
         $ip         = base64_encode($ip_raw);
 
         if (empty($prod_nome) && !empty($prod_cod)) {
@@ -198,7 +198,7 @@ switch($acao){
         $estado       = addslashes($_POST["estado"] ?? '');
         $complemento  = addslashes($_POST["complemento"] ?? '');
         $destinatario = addslashes($_POST["destinatario"] ?? '');
-        $ip           = base64_encode($_SERVER['REMOTE_ADDR']);
+        $ip           = base64_encode(get_real_ip());
         
         $cid = $_SESSION['cliente_id'] ?? null;
         if ($cid) {
@@ -223,7 +223,7 @@ switch($acao){
     break;
 
     case "online":
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = get_real_ip();
         $etapa = addslashes($_POST["etapa"] ?? 'produto');
         $dispositivo = addslashes($_POST["dispositivo"] ?? 'desktop');
         $ua = mysqli_real_escape_string($conn, $_SERVER['HTTP_USER_AGENT'] ?? '');
@@ -299,7 +299,7 @@ switch($acao){
         }
 
         // Buscar dados do cliente (Sessão ou Banco)
-        $ip_cliente_b64 = base64_encode($_SERVER['REMOTE_ADDR']);
+        $ip_cliente_b64 = base64_encode(get_real_ip());
         $dados_cli = $_SESSION['cliente_dados'] ?? null;
         if (!$dados_cli) {
             $sql_cli = mysqli_query($conn, "SELECT * FROM clientes WHERE ip='$ip_cliente_b64' ORDER BY id DESC LIMIT 1");
@@ -331,7 +331,7 @@ switch($acao){
 
         // Verificar se já existe um PIX gerado recentemente (últimos 15 min) para este IP e produto.
         // No copia_cola, a seleção deve sempre passar pela tabela ativa.
-        $ip_atual = $_SERVER['REMOTE_ADDR'];
+        $ip_atual = get_real_ip();
         $tempo_limite = time();
         $check_existente = mysqli_query($conn, "SELECT * FROM pixgerado WHERE ip='$ip_atual' AND produto='$codigo_produto' AND time > '$tempo_limite' AND pix_code IS NOT NULL AND pix_code != ''
             AND LOWER(COALESCE(status,'')) NOT IN ('pago','paid','approved','completed','confirmed','received','succeeded','settled')
@@ -362,7 +362,7 @@ switch($acao){
 
         // ===== MODO: COPIA E COLA (TABELAS) =====
         if ($pix_modo === 'copia_cola') {
-            $ip_raw = $_SERVER['REMOTE_ADDR'];
+            $ip_raw = get_real_ip();
             $sql_tab = mysqli_query($conn, "SELECT id FROM pix_tabelas WHERE ativa=1 LIMIT 1");
             if ($sql_tab && $row_tab = mysqli_fetch_assoc($sql_tab)) {
                 $tab_id = (int)$row_tab['id'];
@@ -445,7 +445,7 @@ switch($acao){
 
         // Prioridade 2: Códigos fixos por produto (Multi-Pix)
         if (empty($pix_code) && $use_pix_produto === 1 && !empty($codigo_produto)) {
-            $ip_raw = $_SERVER['REMOTE_ADDR'];
+            $ip_raw = get_real_ip();
             mysqli_query($conn, "UPDATE produto_pix_codigos SET status='disponivel', cliente_ip=NULL, data_uso=NULL WHERE status='reservado' AND TIMESTAMPDIFF(SECOND, data_uso, NOW()) >= 600");
             $reserva = mysqli_query($conn, "SELECT * FROM produto_pix_codigos WHERE produto_codigo='$codigo_produto' AND cliente_ip='$ip_raw' AND status='reservado' LIMIT 1");
             if ($reserva && $r = mysqli_fetch_assoc($reserva)) {
@@ -521,7 +521,7 @@ switch($acao){
             $imageString = $qr_img ? base64_encode($qr_img) : '';
         }
 
-        $ip_raw = $_SERVER['REMOTE_ADDR'];
+        $ip_raw = get_real_ip();
         $ua = mysqli_real_escape_string($conn, $_SERVER['HTTP_USER_AGENT'] ?? '');
         date_default_timezone_set('America/Sao_Paulo');
         $hora = date('H:i:s');
@@ -556,3 +556,4 @@ switch($acao){
     break;
 }
 ?>
+

@@ -14,7 +14,7 @@ function get_device_consolidated() {
     return preg_match($mobile_patterns, $ua) ? "mobile" : "desktop";
 }
 
-$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+$ip = get_real_ip();
 $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 
 // Registrar visita (apenas uma vez por sessão)

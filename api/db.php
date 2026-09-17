@@ -18,6 +18,18 @@ $host     = !empty(getenv('MYSQLHOST')) ? getenv('MYSQLHOST') : db::$db_server;
 $user     = !empty(getenv('MYSQLUSER')) ? getenv('MYSQLUSER') : db::$db_user;
 $password = !empty(getenv('MYSQLPASSWORD')) ? getenv('MYSQLPASSWORD') : db::$db_pass;
 $database = !empty(getenv('MYSQLDATABASE')) ? getenv('MYSQLDATABASE') : db::$db_db;
+
+if (!function_exists('get_real_ip')) {
+    function get_real_ip() {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($ips[0]);
+        } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        }
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    }
+}
 $port     = !empty(getenv('MYSQLPORT')) ? getenv('MYSQLPORT') : 3306;
 
 // Desativar exceções do MySQLi (evita erro 500 fatal no PHP 8.1+)
