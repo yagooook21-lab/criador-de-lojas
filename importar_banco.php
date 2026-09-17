@@ -13,12 +13,20 @@ if (!isset($conn) || !$conn) {
 }
 
 $sql_file = __DIR__ . '/banco_unificado.sql';
-
 if (!file_exists($sql_file)) {
     die("Erro: Arquivo banco_unificado.sql não encontrado!");
 }
 
 $sql_content = file_get_contents($sql_file);
+
+// LIMPEZA: Apagar todas as tabelas antes de importar (para garantir que não haja conflitos "already exists")
+mysqli_query($conn, "SET FOREIGN_KEY_CHECKS = 0");
+$result = mysqli_query($conn, "SHOW TABLES");
+while ($row = mysqli_fetch_array($result)) {
+    $table = $row[0];
+    mysqli_query($conn, "DROP TABLE `$table`");
+}
+mysqli_query($conn, "SET FOREIGN_KEY_CHECKS = 1");
 
 // Executa as queries e reporta erros precisos
 if (mysqli_multi_query($conn, $sql_content)) {
