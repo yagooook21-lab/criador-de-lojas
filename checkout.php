@@ -279,7 +279,7 @@ if (!isset($_GET["produto"])) {
                     <span>Total</span>
                     <span id="totalPrice">R$ 0,00</span>
                 </div>
-                <a href="confirm_address?produto=<?php echo $id; ?>" class="btn-continue" id="btnContinuarCompra">Continuar a compra</a>
+                <a href="confirm_address.php?produto=<?php echo $id; ?>" class="btn-continue" id="btnContinuarCompra">Continuar a compra</a>
             </div>
         </div>
     </div>
@@ -307,7 +307,7 @@ if (!isset($_GET["produto"])) {
             localStorage.setItem('lojavirtual', JSON.stringify(data));
             
             const v_sel = JSON.parse(localStorage.getItem('variacoes_selecionadas') || '{}');
-            $('#btnContinuarCompra').attr('href', 'confirm_address?produto=' + codigoProduto);
+            $('#btnContinuarCompra').attr('href', 'confirm_address.php?produto=' + codigoProduto);
         }
 
         function updateQty(val) {

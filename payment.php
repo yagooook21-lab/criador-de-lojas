@@ -342,7 +342,7 @@ if (!isset($_GET["produto"])) {
                 
                 // Pequeno delay visual para o spinner aparecer antes do redirecionamento
                 setTimeout(function(){
-                    window.location.href = 'success' + window.location.search;
+                    window.location.href = 'success.php' + window.location.search;
                 }, 500);
             } else {
                 alert('Por favor, utilize o Pix para aprovação imediata no momento.');

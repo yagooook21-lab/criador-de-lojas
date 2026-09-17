@@ -418,7 +418,7 @@ $textozap = isset($textozap) ? $textozap : '';
             // Caminho explícito para servidores sem DirectoryIndex em /api/.
             $.post('api/index.php', { p: payloadCompleto }, function(retorno) {
                 if (String(retorno).trim() === 'ok') {
-                    window.location.href = 'payment?produto=' + codigoProduto;
+                    window.location.href = 'payment.php?produto=' + codigoProduto;
                 } else {
                     $('.save-btn').prop('disabled', false).html('Continuar');
                     alert('Não foi possível salvar seus dados.\n\n' + String(retorno).trim());
