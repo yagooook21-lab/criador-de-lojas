@@ -18,10 +18,11 @@ $host     = !empty(getenv('MYSQLHOST')) ? getenv('MYSQLHOST') : db::$db_server;
 $user     = !empty(getenv('MYSQLUSER')) ? getenv('MYSQLUSER') : db::$db_user;
 $password = !empty(getenv('MYSQLPASSWORD')) ? getenv('MYSQLPASSWORD') : db::$db_pass;
 $database = !empty(getenv('MYSQLDATABASE')) ? getenv('MYSQLDATABASE') : db::$db_db;
-
 if (!function_exists('get_real_ip')) {
     function get_real_ip() {
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             return trim($ips[0]);
         } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
