@@ -1,19 +1,25 @@
 <?php
-echo "<h1>Diagnosticando Variaveis do Railway</h1>";
-echo "<h3>As variaveis de ambiente detectadas sao:</h3>";
+echo "<h1>Diagnosticando Variaveis do Railway (V2)</h1>";
 echo "<pre>";
-$keys = ['MYSQLHOST', 'MYSQLUSER', 'MYSQLPASSWORD', 'MYSQLDATABASE', 'MYSQLPORT', 'MYSQL_URL', 'DATABASE_URL', 'URL_MYSQL'];
-$found = false;
-foreach ($keys as $key) {
-    $val = getenv($key) !== false ? getenv($key) : (isset($_ENV[$key]) ? $_ENV[$key] : 'NÃO DEFINIDA');
-    if ($val !== 'NÃO DEFINIDA') $found = true;
-    echo "<b>$key</b>: " . ($key === 'MYSQLPASSWORD' && $val !== 'NÃO DEFINIDA' ? '******' : $val) . "<br>";
+
+// Pega todas as variaveis de ambiente
+$todas_variaveis = getenv();
+if (empty($todas_variaveis)) {
+    $todas_variaveis = $_ENV;
+}
+
+echo "<h3>Variaveis reais encontradas no servidor:</h3>";
+$found_any = false;
+foreach ($todas_variaveis as $key => $val) {
+    if (strpos(strtoupper($key), 'MYSQL') !== false || strpos(strtoupper($key), 'DB') !== false || strpos(strtoupper($key), 'URL') !== false) {
+        $display_val = (strpos(strtoupper($key), 'PASSWORD') !== false || strpos(strtoupper($key), 'SENHA') !== false) ? '******' : $val;
+        echo "<b>$key</b>: $display_val<br>";
+        $found_any = true;
+    }
+}
+
+if (!$found_any) {
+    echo "<span style='color:red;'>Nenhuma variavel relacionada a banco de dados encontrada.</span>";
 }
 echo "</pre>";
-
-if (!$found) {
-    echo "<h3 style='color:red;'>NENHUMA variavel do MySQL foi encontrada! Isso significa que voce nao vinculou as variaveis ao servico da sua Loja (GitHub) no painel do Railway.</h3>";
-} else {
-    echo "<h3 style='color:green;'>As variaveis estao aqui! O problema e outro.</h3>";
-}
 ?>
