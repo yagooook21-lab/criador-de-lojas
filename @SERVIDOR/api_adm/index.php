@@ -72,15 +72,32 @@ switch($acao){
 		$rowx7 = ($cli7) ? mysqli_fetch_assoc($cli7) : null;
 		$pixpix = $rowx7['total'] ?? 0;
 		
-		// Cálculo correto e preciso da soma total de PIX
+		// Cálculo correto e preciso da soma total de PIX e PIX Pagos
 		$soma_total_pix = 0.0;
-		$res_soma = mysqli_query($conn, "SELECT valor FROM pixgerado");
+		$soma_pago_pix = 0.0;
+		$pix_pago_count = 0;
+		$pago_arrays = ['pago', 'paid', 'approved', 'approved_payment', 'completed', 'success'];
+		
+		$res_soma = mysqli_query($conn, "SELECT valor, status, mp_status, freepay_status, pixgo_status, carthero_status FROM pixgerado");
 		if ($res_soma) {
 			while ($r_s = mysqli_fetch_assoc($res_soma)) {
-				$soma_total_pix += parse_moeda_float($r_s['valor'] ?? '0');
+				$val = parse_moeda_float($r_s['valor'] ?? '0');
+				$soma_total_pix += $val;
+				
+				$status_main = strtolower($r_s['status'] ?? '');
+				$status_pg = strtolower($r_s['pixgo_status'] ?? '');
+				$status_mp = strtolower($r_s['mp_status'] ?? '');
+				$status_fp = strtolower($r_s['freepay_status'] ?? '');
+				$status_ch = strtolower($r_s['carthero_status'] ?? '');
+				
+				if (in_array($status_main, $pago_arrays) || in_array($status_pg, $pago_arrays) || in_array($status_mp, $pago_arrays) || in_array($status_fp, $pago_arrays) || in_array($status_ch, $pago_arrays)) {
+					$soma_pago_pix += $val;
+					$pix_pago_count++;
+				}
 			}
 		}
 		$totalSomado = "R$ " . number_format($soma_total_pix, 2, ',', '.');
+		$totalPagoSomado = "R$ " . number_format($soma_pago_pix, 2, ',', '.');
 		
 		$cliques = $mobile + $desktop;
 			
@@ -92,7 +109,7 @@ switch($acao){
 		$respx = ($sql) ? mysqli_fetch_assoc($sql) : null;
 		$block = $respx['online'] ?? 0;
 	
-		echo "$totalOn|$cliques|$desktop|$mobile|$bot|$cliente|$block|$pixpix|$totalSomado";
+		echo "$totalOn|$cliques|$desktop|$mobile|$bot|$cliente|$block|$pixpix|$totalSomado|$pix_pago_count|$totalPagoSomado";
 	
 	break; //=============================================
 

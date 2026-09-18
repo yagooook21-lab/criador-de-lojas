@@ -299,14 +299,32 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
           </div>
         </div>
 
-        <!-- Pix Gerado -->
+        <!-- Pix Gerado e Pago -->
         <div class="kpi-card kpi-amber">
+          <!-- Icon Gerado (Top Left) -->
           <div class="kpi-icon">
             <i class="material-icons">attach_money</i>
           </div>
-          <div class="kpi-label">Pix Gerado</div>
-          <div class="kpi-value" id="estimativa">
-            <div class="spinner-grow" role="status"><span class="sr-only"></span></div>
+          
+          <!-- Icon Pago (Top Right) -->
+          <div class="kpi-icon" style="left: auto; right: 24px; background: var(--gradient-emerald); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+            <i class="material-icons">check_circle</i>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; z-index: 2;">
+            <div>
+              <div class="kpi-label">Pix Gerado</div>
+              <div class="kpi-value" id="estimativa">
+                <div class="spinner-grow" role="status"><span class="sr-only"></span></div>
+              </div>
+            </div>
+            
+            <div style="text-align: right;">
+              <div class="kpi-label">Pix Pago</div>
+              <div class="kpi-value" id="pix_pago" style="color: var(--accent-emerald);">
+                <div class="spinner-grow" role="status"><span class="sr-only"></span></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -504,6 +522,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	        var elCliques = document.getElementById("cliques");
 	        var elCadastro = document.getElementById("cadastro");
 	        var elEstimativa = document.getElementById("estimativa");
+	        var elPixPago = document.getElementById("pix_pago");
 	        var elCelular = document.getElementById("celular");
 	        var elComputador = document.getElementById("computador");
 	        var elBot = document.getElementById("bot");
@@ -513,6 +532,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	        if (elCliques) elCliques.innerHTML = info[1];
 	        if (elCadastro) elCadastro.innerHTML = info[5];
 	        if (elEstimativa) elEstimativa.innerHTML = info[7] + ' <small class="text-xs">(' + (info[8] || 'R$ 0,00') + ')</small>';
+	        if (elPixPago && info[9] !== undefined) elPixPago.innerHTML = info[9] + ' <small class="text-xs text-success">(' + (info[10] || 'R$ 0,00') + ')</small>';
 	        if (elCelular) elCelular.innerHTML = info[3];
 	        if (elComputador) elComputador.innerHTML = info[2];
 	        if (elBot) elBot.innerHTML = info[4];
