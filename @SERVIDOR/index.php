@@ -55,12 +55,12 @@
 
 <body class="bg-dark-sidebar">
   
-  <main class="main-content  mt-0">
-    <div class="page-header align-items-start min-vh-100" style="background-position: 35% !important; background-size: auto !important; background-image: none;">
+  <main class="main-content mt-0" style="margin-left: 0 !important; width: 100%; min-height: 100vh; display: flex; flex-direction: column;">
+    <div class="page-header align-items-center justify-content-center min-vh-100 w-100" style="background-position: center !important; background-size: cover !important; background-image: none; display: flex; flex: 1;">
       <span class="mask bg-dark-sidebar opacity-6"></span>
       <div class="container my-auto">
-        <div class="row">
-          <div class="col-lg-4 col-md-8 col-12 mx-auto">
+        <div class="row justify-content-center">
+          <div class="col-xl-4 col-lg-5 col-md-7 col-sm-10 col-12 mx-auto px-4">
             <div class="card z-index-0 fadeIn3 fadeInBottom">
               <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
            
@@ -103,15 +103,13 @@
 	  
       <footer class="footer position-absolute bottom-2 py-2 w-100">
         <div class="container">
-          <div class="row align-items-center justify-content-lg-between">
-            <div class="col-12 col-md-6 my-auto">
-              <div class="copyright text-center text-sm text-white text-lg-start">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-12 my-auto">
+              <div class="copyright text-center text-sm text-white">
                 © <script>
                   document.write(new Date().getFullYear())
                 </script>, Copyright © 2026 Marketplace. Todos os direitos reservados.
               </div>
-            </div>
-          
           </div>
         </div>
       </footer>
