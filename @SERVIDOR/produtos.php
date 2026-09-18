@@ -134,6 +134,35 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
           
           <div class="row">
             <?php 
+            // Pre-calculate PIX metrics per product
+            $pix_gerado_counts = [];
+            $pix_pago_counts = [];
+            $pago_arrays = ['pago', 'paid', 'approved', 'approved_payment', 'completed', 'success'];
+
+            $q_pix = mysqli_query($conn, "SELECT produto, status, carthero_status, mp_status, freepay_status, pixgo_status FROM pixgerado");
+            if($q_pix) {
+                while($rp = mysqli_fetch_array($q_pix)) {
+                    $prod_codigo = $rp['produto'];
+                    if(!$prod_codigo) continue;
+                    
+                    if(!isset($pix_gerado_counts[$prod_codigo])) {
+                        $pix_gerado_counts[$prod_codigo] = 0;
+                        $pix_pago_counts[$prod_codigo] = 0;
+                    }
+                    $pix_gerado_counts[$prod_codigo]++;
+                    
+                    $st = strtolower($rp['status'] ?? '');
+                    $ct = strtolower($rp['carthero_status'] ?? '');
+                    $mp = strtolower($rp['mp_status'] ?? '');
+                    $fp = strtolower($rp['freepay_status'] ?? '');
+                    $pg = strtolower($rp['pixgo_status'] ?? '');
+
+                    if (in_array($st, $pago_arrays) || in_array($ct, $pago_arrays) || in_array($mp, $pago_arrays) || in_array($fp, $pago_arrays) || in_array($pg, $pago_arrays)) {
+                        $pix_pago_counts[$prod_codigo]++;
+                    }
+                }
+            }
+
             $sql = mysqli_query($conn, "SELECT * from produto ORDER BY id DESC");
             if($sql && mysqli_num_rows($sql) > 0){ 
               while($row = mysqli_fetch_array($sql)){
@@ -143,6 +172,10 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
                 $valor = $row["valor"];
                 $img = $row["img"];
                 $status = isset($row["status"]) ? $row["status"] : 'ativo';
+                $cliques = isset($row["cliques"]) ? (int)$row["cliques"] : 0;
+                
+                $pix_gerado = isset($pix_gerado_counts[$codigo]) ? $pix_gerado_counts[$codigo] : 0;
+                $pix_pago = isset($pix_pago_counts[$codigo]) ? $pix_pago_counts[$codigo] : 0;
                 
                 $status_label = "Ativo";
                 $status_class = "status-active";
@@ -164,6 +197,22 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
                       $img_src = (strpos($img, 'http') === 0) ? $img : "../arquivos/produtos/$codigo/$img"; 
                     ?>
                     <img src="<?php echo $img_src; ?>" class="img-fluid border-radius-lg shadow" style="height: 150px; width: 100%; object-fit: cover;">
+                  </div>
+                  
+                  <!-- Métricas de Desempenho -->
+                  <div class="d-flex justify-content-between text-center mb-3 p-2 bg-light border-radius-md" style="font-size: 11px; font-weight: 600;">
+                    <div title="Clicks Reais" style="color: #555;">
+                      <i class="material-icons text-info" style="font-size: 16px; display: block; margin: 0 auto 2px;">ads_click</i>
+                      <?php echo $cliques; ?>
+                    </div>
+                    <div title="PIX Gerados" style="color: #555;">
+                      <i class="material-icons text-warning" style="font-size: 16px; display: block; margin: 0 auto 2px;">pix</i>
+                      <?php echo $pix_gerado; ?>
+                    </div>
+                    <div title="PIX Pagos" style="color: #555;">
+                      <i class="material-icons text-success" style="font-size: 16px; display: block; margin: 0 auto 2px;">check_circle</i>
+                      <?php echo $pix_pago; ?>
+                    </div>
                   </div>
                   
                   <div class="d-flex justify-content-between align-items-center mb-2">
