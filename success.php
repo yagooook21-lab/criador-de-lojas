@@ -251,6 +251,7 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
                 if (currentGateway === 'copia_cola') {
                     $('.state-title').text('Aguardando confirmação do pagamento');
                     $('.payment-hint').text('Código copiado. Assim que o pagamento for confirmado no painel, o rastreio será liberado automaticamente.');
+                    dispararPurchase();
                 }
                 if (currentGateway === 'estatico') {
                     dispararPurchase();
