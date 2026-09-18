@@ -300,29 +300,29 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
         </div>
 
         <!-- Pix Gerado e Pago -->
-        <div class="kpi-card kpi-amber">
-          <!-- Icon Gerado (Top Left) -->
-          <div class="kpi-icon">
-            <i class="material-icons">attach_money</i>
-          </div>
-          
-          <!-- Icon Pago (Top Right) -->
-          <div class="kpi-icon" style="left: auto; right: 24px; background: var(--gradient-emerald); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
-            <i class="material-icons">check_circle</i>
-          </div>
-          
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; z-index: 2;">
+        <div class="kpi-card kpi-amber" style="justify-content: center; padding: 20px;">
+          <!-- Row 1: Pix Gerado -->
+          <div style="display: flex; align-items: center; margin-bottom: 16px; z-index: 2;">
+            <div class="kpi-icon" style="position: relative; top: auto; left: auto; width: 44px; height: 44px; margin-right: 16px; flex-shrink: 0;">
+              <i class="material-icons">attach_money</i>
+            </div>
             <div>
-              <div class="kpi-label">Pix Gerado</div>
-              <div class="kpi-value" id="estimativa">
-                <div class="spinner-grow" role="status"><span class="sr-only"></span></div>
+              <div class="kpi-label" style="margin-bottom: 2px;">Pix Gerado</div>
+              <div class="kpi-value" id="estimativa" style="font-size: 1.5rem; line-height: 1;">
+                <div class="spinner-grow spinner-grow-sm" role="status"><span class="sr-only"></span></div>
               </div>
             </div>
-            
-            <div style="text-align: right;">
-              <div class="kpi-label">Pix Pago</div>
-              <div class="kpi-value" id="pix_pago" style="color: var(--accent-emerald);">
-                <div class="spinner-grow" role="status"><span class="sr-only"></span></div>
+          </div>
+          
+          <!-- Row 2: Pix Pago -->
+          <div style="display: flex; align-items: center; z-index: 2;">
+            <div class="kpi-icon" style="position: relative; top: auto; left: auto; width: 44px; height: 44px; margin-right: 16px; flex-shrink: 0; background: var(--gradient-emerald); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+              <i class="material-icons">check_circle</i>
+            </div>
+            <div>
+              <div class="kpi-label" style="margin-bottom: 2px;">Pix Pago</div>
+              <div class="kpi-value" id="pix_pago" style="color: var(--accent-emerald); font-size: 1.5rem; line-height: 1;">
+                <div class="spinner-grow spinner-grow-sm" role="status"><span class="sr-only"></span></div>
               </div>
             </div>
           </div>
