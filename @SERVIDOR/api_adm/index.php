@@ -208,9 +208,16 @@ switch($acao){
 		 }
 		 
 		 // Formatar status
-		 $status_raw = strtolower($rowx['status'] ?? ($rowx['pixgo_status'] ?? ($rowx['mp_status'] ?? ($rowx['freepay_status'] ?? ($rowx['carthero_status'] ?? 'pendente')))));
+		 $status_main = strtolower($rowx['status'] ?? '');
+		 $status_pg = strtolower($rowx['pixgo_status'] ?? '');
+		 $status_mp = strtolower($rowx['mp_status'] ?? '');
+		 $status_fp = strtolower($rowx['freepay_status'] ?? '');
+		 $status_ch = strtolower($rowx['carthero_status'] ?? '');
+		 
 		 $badge_status = '<span class="badge badge-xs bg-gradient-warning">Aguardando Pagamento</span>';
-		 if (in_array($status_raw, ['pago', 'paid', 'approved', 'approved_payment', 'completed', 'success'])) {
+		 $pago_arrays = ['pago', 'paid', 'approved', 'approved_payment', 'completed', 'success'];
+		 
+		 if (in_array($status_main, $pago_arrays) || in_array($status_pg, $pago_arrays) || in_array($status_mp, $pago_arrays) || in_array($status_fp, $pago_arrays) || in_array($status_ch, $pago_arrays)) {
 			 $badge_status = '<span class="badge badge-xs bg-gradient-success">Pago</span>';
 		 }
 		 
@@ -349,6 +356,14 @@ switch($acao){
         $codigo_id = (int)($_POST['codigo_id'] ?? 0);
         if (!$codigo_id) { echo json_encode(['ok'=>false,'error'=>'ID invǭlido']); break; }
         $r = mysqli_query($conn, "UPDATE pix_tabela_codigos SET status_pagamento='PAGO', pago_em=NOW() WHERE id='$codigo_id'");
+        
+        // Também atualizar o status em pixgerado para refletir nas Ordens de Pagamento
+        $r_code = mysqli_query($conn, "SELECT codigo FROM pix_tabela_codigos WHERE id='$codigo_id'");
+        if ($r_code && $code_row = mysqli_fetch_assoc($r_code)) {
+            $code_safe = mysqli_real_escape_string($conn, $code_row['codigo']);
+            mysqli_query($conn, "UPDATE pixgerado SET status='pago' WHERE pix_code='$code_safe'");
+        }
+        
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($r ? ['ok'=>true] : ['ok'=>false,'error'=>mysqli_error($conn)]);
     break;
