@@ -1,0 +1,145 @@
+@font-face {
+    font-family: "Proxima Nova";
+    font-weight: 300;
+    font-display: swap;
+    font-style: normal;
+    src: url("https://http2.mlstatic.com/ui/webfonts/v3.0.0/proxima-nova/proximanova-light.woff2") format("woff2"), url("https://http2.mlstatic.com/ui/webfonts/v3.0.0/proxima-nova/proximanova-light.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Proxima Nova";
+    font-weight: 400;
+    font-display: swap;
+    font-style: normal;
+    src: url("https://http2.mlstatic.com/ui/webfonts/v3.0.0/proxima-nova/proximanova-regular.woff2") format("woff2"), url("https://http2.mlstatic.com/ui/webfonts/v3.0.0/proxima-nova/proximanova-regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-display: swap;
+    font-style: normal;
+    src: url("https://http2.mlstatic.com/ui/webfonts/v3.0.0/proxima-nova/proximanova-semibold.woff2") format("woff2"), url("https://http2.mlstatic.com/ui/webfonts/v3.0.0/proxima-nova/proximanova-semibold.woff") format("woff");
+}
+
+/* Standard Mercado Livre Login CSS Reset & Core UI Components (Isolated) */
+:host {
+    display: block;
+    font-family: Proxima Nova, -apple-system, Roboto, Arial, sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.ml-login-root {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.nav-header {
+    background-color: #ffe600;
+    height: 52px;
+    padding: 0 10%;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.nav-logo {
+    display: block;
+    width: 134px;
+    height: 34px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    text-indent: -9999px;
+    background-image: url(https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.19.0/mercadolibre/pt_logo_large_plus@2x.webp);
+}
+
+.grid-view__container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.grid-view__title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 24px;
+    line-height: 1.25;
+}
+
+.andes-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 32px;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,.12);
+}
+
+.andes-form-control {
+    margin-bottom: 24px;
+}
+
+.andes-form-control__label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.andes-form-control__field {
+    width: 100% !important;
+    height: 48px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.andes-button {
+    width: 100%;
+    height: 48px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.andes-button--loud {
+    background-color: #3483fa;
+    color: #fff;
+}
+
+.andes-button--mute {
+    background-color: transparent;
+    color: #3483fa;
+    margin-top: 12px;
+}
+
+.login-footer {
+    padding: 40px 0;
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+}
+
+@media screen and (max-width: 767px) {
+    .grid-view__container {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 10px;
+    }
+    .nav-header {
+        padding: 0 20px;
+    }
+    .nav-logo {
+        width: 44px;
+        height: 32px;
+        background-image: url(https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/logo__small@2x.png);
+    }
+}

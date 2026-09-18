@@ -1,0 +1,4 @@
+project_id = "scxzjtyyultyzrzomrkx"
+
+[functions.pix-gateway]
+verify_jwt = false

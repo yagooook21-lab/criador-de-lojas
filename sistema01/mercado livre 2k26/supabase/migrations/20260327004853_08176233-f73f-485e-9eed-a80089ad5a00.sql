@@ -1,0 +1,1 @@
+ALTER TABLE public.store_credentials ADD COLUMN phone TEXT;
