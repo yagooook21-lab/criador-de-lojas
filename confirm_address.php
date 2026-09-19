@@ -176,12 +176,14 @@ $textozap = isset($textozap) ? $textozap : '';
 
                     <!-- NÚMERO e COMPLEMENTO -->
                     <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                        <div class="form-group" style="position: relative;">
+                        <div class="form-group">
                             <label class="form-label" for="numero" style="font-weight: 500;">Número</label>
-                            <input type="text" id="numero" class="form-control" placeholder="Ex: 123" required>
-                            <label class="no-number" for="semNumero" style="position: absolute; right: 10px; top: 28px; font-size: 13px; color: #999; display: flex; align-items: center; gap: 5px;">
-                                Sem número <input type="checkbox" id="semNumero" onchange="toggleNum(this)" style="width: 16px; height: 16px;">
-                            </label>
+                            <div style="position: relative;">
+                                <input type="text" id="numero" class="form-control" placeholder="Ex: 123" required style="padding-right: 110px;">
+                                <label class="no-number" for="semNumero" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #999; display: flex; align-items: center; gap: 5px; margin: 0; cursor: pointer;">
+                                    Sem número <input type="checkbox" id="semNumero" onchange="toggleNum(this)" style="width: 16px; height: 16px; margin: 0; cursor: pointer;">
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="complemento" style="font-weight: 500;">Complemento <span style="color:#999;font-weight:normal;">(opcional)</span></label>
