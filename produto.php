@@ -699,7 +699,7 @@ header.compact-mode { padding: 6px 16px; }
           <span class="preco-valor"><?php echo number_format($valor_total, 0, ',', '.'); ?></span>
           <span class="preco-simbolo-cent"><?php echo substr(number_format($valor_total, 2, ',', '.'), -2); ?></span>
           <?php if($desconto_num > 0): ?>
-          <span class="preco-desconto"><?php echo $desconto; ?>% NO PIX</span>
+          <span class="preco-desconto"><?php echo $desconto; ?> NO PIX</span>
           <?php endif; ?>
         </div>
         <div class="parcelamento">em 12x R$ <?php echo number_format($parcela12[1], 2, ',', '.'); ?></div>
