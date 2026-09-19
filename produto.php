@@ -818,7 +818,37 @@ header.compact-mode { padding: 6px 16px; }
         <img src="arquivos/pagamentos.webp" style="max-width: 100%; height: auto;" alt="Meios de Pagamento">
       </div>
     </div>
+    </div>
   </div>
+  
+  <!-- CARROSSEL PRODUTOS RELACIONADOS MOBILE -->
+  <?php if(!empty($produtos_relacionados_especificos)): ?>
+  <div class="mobile-only" style="margin-top: 20px;">
+    <div class="section-titulo" style="font-size: 18px; font-weight: 300; color: #666; margin-bottom: 15px;">Produtos relacionados</div>
+    <div style="position: relative;">
+        <div class="produtos-relacionados-track" id="relatedTrackMobileTop" style="padding: 10px 5px; gap: 15px;">
+          <?php foreach($produtos_relacionados_especificos as $outro): 
+            $outro_valor = (float)str_replace(',', '.', str_replace('.', '', $outro['valor']));
+          ?>
+          <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card" style="flex: 0 0 150px;">
+            <div class="produto-relacionado-img-wrap" style="height: 120px;">
+              <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
+            </div>
+            <div class="produto-relacionado-info" style="padding: 8px;">
+              <div class="produto-relacionado-nome" style="font-size: 12px; height: 32px; margin-bottom: 4px;"><?php echo htmlspecialchars($outro['nome']); ?></div>
+              <div class="produto-relacionado-preco" style="font-size: 18px; margin-bottom: 2px;">R$ <?php echo number_format($outro_valor, 2, ',', '.'); ?></div>
+              <div class="produto-relacionado-parcela" style="font-size: 12px; margin-bottom: 4px;">10x R$ <?php echo number_format($outro_valor / 10, 2, ',', '.'); ?> s/ juros</div>
+              <div class="produto-relacionado-entrega"><span class="frete-destaque" style="font-size:11px;">Frete grátis ⚡ <i>FULL</i></span></div>
+            </div>
+          </a>
+          <?php endforeach; ?>
+        </div>
+        <button class="nav-arrow prev-arrow" onclick="document.getElementById('relatedTrackMobileTop').scrollBy({left: -160, behavior: 'smooth'})" style="left: -10px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="nav-arrow next-arrow" onclick="document.getElementById('relatedTrackMobileTop').scrollBy({left: 160, behavior: 'smooth'})" style="right: -10px;"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+  <?php endif; ?>
+
 </div>
 
 <div class="vendedor-section">
