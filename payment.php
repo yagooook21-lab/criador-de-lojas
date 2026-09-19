@@ -186,6 +186,7 @@ if (!isset($_GET["produto"])) {
             .checkout-wrap { padding: 15px; padding-bottom: 150px; }
             .summary-card { position: static; }
             .mobile-floating-bar { display: block; }
+            #desktop-finish-btn { display: none; }
         }
         @media (max-width: 480px) {
             .checkout-card, .summary-card { padding: 16px; }
@@ -371,7 +372,7 @@ if (!isset($_GET["produto"])) {
                         <span>Frete grátis</span>
                     </div>
 
-                    <button class="btn-finish" onclick="finish()">Pagar e finalizar</button>
+                    <button id="desktop-finish-btn" class="btn-finish" onclick="finish()">Pagar e finalizar</button>
                 </div>
             </div>
         </div>
@@ -397,7 +398,7 @@ if (!isset($_GET["produto"])) {
         <div class="mfb-content">
             <div class="mfb-price-col">
                 <span class="mfb-scratched" id="mfb-scratched">R$ 0,00</span>
-                <span class="mfb-price-main"><span id="mfb-total">R$ 0,00</span> <i class="fa-solid fa-chevron-up"></i></span>
+                <span class="mfb-price-main"><span id="mfb-total">R$ 0,00</span> <i class="fa-solid fa-angle-up"></i></span>
                 <span class="mfb-frete">Frete grátis</span>
             </div>
             <button class="mfb-btn btn-finish" onclick="finish()">Pagar e finalizar</button>
