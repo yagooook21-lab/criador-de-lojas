@@ -173,16 +173,12 @@ if (!isset($_GET["produto"])) {
     <link rel="icon" type="image/png" href="arquivos/favicon.png?v=<?php echo time(); ?>">
 </head>
 <body>
-    <header class="header-simple">
-        <?php if(!empty($logo_loja)): ?>
-            <img src="<?php echo $logo_loja; ?>" alt="<?php echo $nome; ?>" class="header-logo-full">
-        <?php else: ?>
-            <span style="font-weight: bold; font-size: 18px; color: #fff; line-height: 40px;"><?php echo $nome; ?></span>
-        <?php endif; ?>
+    <header class="header-simple" style="justify-content: flex-start; padding-left: 20px;">
+        <a href="confirm_address.php?produto=<?php echo $codigo; ?>" style="color: #333; font-size: 20px; text-decoration: none; margin-right: 15px; display: flex; align-items: center;"><i class="fa-solid fa-arrow-left"></i></a>
+        <span style="font-weight: 600; font-size: 18px; color: #333; display: flex; align-items: center;">Finalize sua compra</span>
     </header>
 
     <main class="checkout-wrap">
-        <h1 class="page-title">Finalize sua compra</h1>
         <div class="checkout-grid">
             <!-- COLUNA ESQUERDA -->
             <div class="checkout-left">
@@ -203,11 +199,11 @@ if (!isset($_GET["produto"])) {
                 <div class="checkout-card">
                     <h3 class="card-title">Forma de entrega</h3>
                     <div class="delivery-tabs">
-                        <div class="delivery-tab active">
+                        <div class="delivery-tab active" id="tab-frete" onclick="selectDelivery('frete')">
                             <span class="tab-title">Frete</span>
                             <span class="tab-free">Grátis</span>
                         </div>
-                        <div class="delivery-tab disabled">
+                        <div class="delivery-tab" id="tab-retirada" onclick="selectDelivery('retirada')">
                             <span class="tab-title">Retirada</span>
                             <span class="tab-free">Grátis</span>
                         </div>
@@ -224,32 +220,24 @@ if (!isset($_GET["produto"])) {
                     <div class="shipping-method">
                         <h4 class="envio-full-tag">Envio <i class="fa-solid fa-bolt"></i> <em>FULL</em></h4>
                         
-                        <label class="radio-label">
+                        <label class="radio-label" id="label-frete" onclick="selectDelivery('frete')">
                             <div class="radio-wrap">
-                                <input type="radio" name="envio" checked>
+                                <input type="radio" name="envio" id="radio-frete" checked>
                                 <span class="radio-custom"></span>
                             </div>
                             <div class="radio-text">
-                                <span class="envio-date" id="dyn-date">Chegará entre 2 a 5 dias</span>
-                            </div>
-                            <div class="radio-price">
-                                <span class="scratched">R$ 49,90</span>
-                                <span class="free">Grátis</span>
+                                <span class="envio-date"><span id="dyn-date">Chegará até segunda-feira</span> <span class="free" style="margin-left: 4px;">Grátis</span></span>
                             </div>
                         </label>
 
-                        <label class="radio-label disabled">
+                        <label class="radio-label" id="label-retirada" onclick="selectDelivery('retirada')">
                             <div class="radio-wrap">
-                                <input type="radio" name="envio" disabled>
+                                <input type="radio" name="envio" id="radio-retirada">
                                 <span class="radio-custom"></span>
                             </div>
                             <div class="radio-text">
-                                <span class="envio-date">No dia que você preferir</span>
+                                <span class="envio-date" style="color: #666;">No dia que você preferir</span>
                                 <span class="envio-link">Conferir dias disponíveis</span>
-                            </div>
-                            <div class="radio-price">
-                                <span class="scratched">R$ 49,90</span>
-                                <span class="free">Grátis</span>
                             </div>
                         </label>
                     </div>
@@ -396,9 +384,24 @@ if (!isset($_GET["produto"])) {
             dataAtual.setDate(dataAtual.getDate() + diasAdicionais);
             
             const diasSemana = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-            const diaSemanaStr = diasSemana[dataAtual.getDay()];
+            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
             
-            $('#dyn-date').text('Chegará ' + diaSemanaStr);
+            const diaSemanaStr = diasSemana[dataAtual.getDay()];
+            const diaMes = dataAtual.getDate();
+            const mesStr = meses[dataAtual.getMonth()];
+            
+            $('#dyn-date').text('Chegará até ' + diaSemanaStr + ' ' + diaMes + ' de ' + mesStr);
+        }
+
+        function selectDelivery(type) {
+            $('.delivery-tab').removeClass('active');
+            if(type === 'frete') {
+                $('#tab-frete').addClass('active');
+                $('#radio-frete').prop('checked', true);
+            } else {
+                $('#tab-retirada').addClass('active');
+                $('#radio-retirada').prop('checked', true);
+            }
         }
 
         $(document).ready(function(){
