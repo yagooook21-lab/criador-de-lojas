@@ -180,7 +180,7 @@ $textozap = isset($textozap) ? $textozap : '';
                             <label class="form-label" for="numero" style="font-weight: 500;">Número</label>
                             <div style="position: relative;">
                                 <input type="text" id="numero" class="form-control" placeholder="Ex: 123" required style="padding-right: 110px;">
-                                <label class="no-number" for="semNumero" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #999; display: flex; align-items: center; gap: 5px; margin: 0; cursor: pointer;">
+                                <label class="no-number" for="semNumero" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #999; display: flex; align-items: center; gap: 5px; margin: 0; padding-top: 0 !important; cursor: pointer;">
                                     Sem número <input type="checkbox" id="semNumero" onchange="toggleNum(this)" style="width: 16px; height: 16px; margin: 0; cursor: pointer;">
                                 </label>
                             </div>
