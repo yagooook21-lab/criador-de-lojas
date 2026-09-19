@@ -153,7 +153,7 @@ $textozap = isset($textozap) ? $textozap : '';
     </header>
 
     <main class="checkout-wrap">
-        <h1 class="page-title">Editar endereço</h1>
+        <h1 class="page-title">Entrega da sua compra</h1>
         <section class="form-card" style="padding: 0;">
             <form id="formAddress" onsubmit="proceed(); return false;">
                 
