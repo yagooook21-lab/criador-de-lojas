@@ -1132,93 +1132,182 @@ body.custom-checkout header .item-security {
 		-->
 			<form id="form-checkout-shipment" action="" data-url="https://viacep.com.br/ws/00000-000/json/" class="form-horizontal clearfix text-left form-address " method="POST">
 		
-		<div class="clearfix group-first mt5">
-		<div class="form-group w-50">
-			<label for="zipcode" class="label-control block">
-				CEP
-			</label>
+		<div class="clearfix group-first mt5" id="checkout-parte-1">
+			<!-- CEP -->
+			<div class="form-group w-100" style="position: relative;">
+				<label for="zipcode" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px;">CEP</label>
+				<div class="holder-input holder-input-zipcode invalid">
+					<input type="tel" name="zipcode" id="zipcode" class="input input-validate required zipcode minlength" minlength="9" autofocus="" value="" maxlength="9" placeholder="Ex.: 05410001" style="border-radius: 6px; padding: 12px 10px;">
+					<a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" style="position: absolute; right: 10px; top: 38px; color: #3483fa; font-size: 13px; text-decoration: none;">Não sei meu CEP</a>
+					<span class="spinner spinner-grey spinner-form"></span>
+				</div>
+				<div id="zipcode_errors" class="error-block" data-error-relatedfields="" style="display: none;"></div>
+			</div>
 
-			<div class="holder-input holder-input-zipcode invalid">
-				<input type="tel" name="zipcode" id="zipcode" class="input input-validate required zipcode minlength" minlength="9" autofocus="" value="" maxlength="9">
-				<span class="spinner spinner-grey spinner-form"></span>
-			</div><!-- /.holder-input -->
-			<div id="zipcode_errors" class="error-block" data-error-relatedfields="" style="display: none;"></div><!-- /.error-block -->
-		</div><!-- /.form-group w-50 -->
+			<!-- RUA / AVENIDA -->
+			<div class="form-group w-100 mt15">
+				<label for="street" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px;">Rua / Avenida</label>
+				<div class="holder-input invalid">
+					<input type="text" name="street" id="street" class="input input-validate required street minlength" minlength="5" value="" placeholder="Ex.: Avenida los Leones, 4563" style="border-radius: 6px; padding: 12px 10px;">
+				</div>
+				<div id="street_errors" class="error-block" style="color: #e53935; font-size: 12px; margin-top: 4px;"><i class="fa-solid fa-circle-minus"></i> Informe o número de endereço</div>
+			</div>
 
-		<div class="form-group w-50">
-			<div class="city-infos hide black-60 f13">
-				<span class="city-name"></span>
+			<div style="display: flex; gap: 10px; margin-top: 15px;">
+				<!-- NUMERO -->
+				<div class="form-group w-50 keep-size">
+					<label for="number" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px; color:#999;">Número</label>
+					<div class="holder-input invalid" style="position: relative;">
+						<input type="text" maxlength="9" name="number" id="number" class="input input-validate required" value="" placeholder="SN" style="border-radius: 6px; padding: 12px 10px;">
+						<div style="position: absolute; right: 10px; top: 12px; display: flex; align-items: center; gap: 5px; color: #999; font-size: 13px;">
+							Sem número <input type="checkbox" id="no_number" style="width:16px; height:16px;">
+						</div>
+					</div>
+					<div id="number_errors" class="error-block"></div>
+				</div>
+
+				<!-- COMPLEMENTO -->
+				<div class="form-group w-50 keep-size">
+					<label for="address_complement" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px;">Complemento (opcional)</label>
+					<div class="holder-input">
+						<input type="text" name="complement" id="address_complement" class="input address_complement js-check" value="" maxlength="40" placeholder="Ex: 201" style="border-radius: 6px; padding: 12px 10px;">
+					</div>
+					<div id="complement_errors" class="error-block"></div>
+				</div>
+			</div>
+
+			<!-- DADOS DE QUEM VAI RECEBER -->
+			<div style="margin-top: 25px;">
+				<h3 style="font-size: 16px; font-weight: bold; margin-bottom: 2px; color: #333;">Dados de quem vai receber</h3>
+				<p style="font-size: 13px; color: #666; margin-bottom: 15px;">Ligaremos se houver algum problema com a entrega.</p>
 				
-				<span class="city-uf"></span>
+				<div class="form-group w-100">
+					<label for="receiver" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px;">Nome completo</label>
+					<div class="holder-input valid">
+						<input type="text" name="receiver" id="receiver" class="input input-validate required receiver minlength fullname" minlength="3" value="" style="border-radius: 6px; padding: 12px 10px;">
+					</div>
+					<div id="receiver_errors" class="error-block" style="color: #e53935; font-size: 12px; margin-top: 4px; display: none;"><i class="fa-solid fa-circle-minus"></i> Você deve inserir nome e sobrenome.</div>
+				</div>
+
+				<div class="form-group w-100 mt15">
+					<label for="phone" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px;">Telefone de contato</label>
+					<div class="holder-input valid" style="display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; height: 42px;">
+						<span style="background: #f5f5f5; padding: 0 10px; font-size: 14px; color: #333; height: 100%; display: flex; align-items: center; border-right: 1px solid #ccc;">BR+55</span>
+						<input type="tel" name="phone" id="phone" class="input" placeholder="(11) 96123-4567" style="border: none; outline: none; padding: 12px 10px; width: 100%; box-shadow: none;">
+					</div>
+					<div id="phone_errors" class="error-block" style="color: #e53935; font-size: 12px; margin-top: 4px; display: none;"><i class="fa-solid fa-circle-minus"></i> Você deve inserir um número de telefone.</div>
+				</div>
 			</div>
-		</div><!-- /.form-group w-50 -->
 
-	</div><!-- /.clearfix -->
+			<!-- CAMPOS OCULTOS -->
+			<input type="hidden" name="neighborhood" id="neighborhood" value="">
+			<input type="hidden" name="city" id="city" value="">
+		</div><!-- /#checkout-parte-1 -->
 
-	<div class="group-form hide">
-		<div class="form-group w-100">
-			<label for="street" class="label-control block">Endereço</label>
-			<div class="holder-input invalid">
-				<input type="street" name="street" id="street" class="input input-validate required street minlength" minlength="5" value="">
-			</div><!-- /.holder-input -->
-			<div id="street_errors" class="error-block"></div><!-- /.error-block -->
-		</div><!-- /.form-group w-50 -->
-
-		<div class="form-group w-38 keep-size -padding-right">
-			<label for="number" class="label-control block">Número</label>
-			<div class="holder-input invalid">
-				<input type="text" maxlength="9" name="number" id="number" class="input input-validate required" value="">
-			</div><!-- /.holder-input -->
-			<div id="number_errors" class="error-block"></div><!-- /.error-block -->
-		</div><!-- /.form-group w-50 -->
-
-		<div class="form-group w-62 keep-size -padding-left">
-			<label for="neighborhood" class="label-control block">Bairro</label>
-			<div class="holder-input invalid">
-				<input type="neighborhood" name="neighborhood" id="neighborhood" class="input input-validate required neighborhood minlength maxlength" minlength="3" maxlength="40" value="" data-error-message-maxlength="Limite de 40 caracteres foi excedido.">
-			</div><!-- /.holder-input -->
-			<div id="neighborhood_errors" class="error-block"></div><!-- /.error-block -->
-		</div>
-		
-		
-		
-		<div class="form-group w-100">
-			<label for="street" class="label-control block">Cidade</label>
-			<div class="holder-input invalid">
-				<input type="street" name="city" id="city" class="input input-validate required street minlength" minlength="50" value="">
-			</div><!-- /.holder-input -->
-			<div id="errors" class="error-block"></div><!-- /.error-block -->
-		</div><!-- /.form-group w-50 -->
-		
-		
-		
-
-		<div class="form-group w-100">
-			<label for="address_complement" class="label-control block">
-				Complemento <span class="f11 black-60">(opcional)</span>
-			</label>
-			<div class="holder-input">
-				<input type="text" name="complement" id="address_complement" class="input address_complement js-check" value="" maxlength="40">
-			</div><!-- /.holder-input -->
-			<div id="complement_errors" class="error-block"></div><!-- /.error-block -->
-		</div><!-- /.form-group w-50 -->
-
-		<div class="form-group w-100">
-			<label for="receiver" class="label-control block">Destinatário</label>
-			<div class="holder-input valid">
-				<input type="receiver" name="receiver" id="receiver" class="input input-validate required receiver minlength fullname" minlength="3" value="">
+		<!-- PARTE 2: CONTE MAIS SOBRE SEU ENDEREÇO (INICIALMENTE OCULTA) -->
+		<div id="checkout-parte-2" style="display: none; margin-top: 25px;">
+			<h3 style="font-size: 18px; font-weight: bold; margin-bottom: 4px; color: #333;">Conte mais sobre seu endereço</h3>
+			<p style="font-size: 13px; color: #666; margin-bottom: 15px;">Nos ajuda a encontrar você com mais facilidade na hora da entrega</p>
+			
+			<div style="display: flex; gap: 10px; margin-bottom: 15px;">
+				<div class="tipo-local-btn active" style="flex: 1; border: 1px solid #3483fa; border-radius: 8px; padding: 15px; cursor: pointer; text-align: left; background-color: #f5f9ff;">
+					<i class="fa-solid fa-house" style="font-size: 20px; color: #333; margin-bottom: 10px;"></i>
+					<div style="font-weight: 500; font-size: 14px; color: #333;">Uma residência</div>
+					<div style="font-size: 11px; color: #999;">Casa, prédio, condomínio</div>
+				</div>
+				<div class="tipo-local-btn" style="flex: 1; border: 1px solid #ccc; border-radius: 8px; padding: 15px; cursor: pointer; text-align: left;">
+					<i class="fa-solid fa-store" style="font-size: 20px; color: #333; margin-bottom: 10px;"></i>
+					<div style="font-weight: 500; font-size: 14px; color: #333;">Um local de trabalho</div>
+					<div style="font-size: 11px; color: #999;">Loja, escritório, comércio</div>
+				</div>
 			</div>
-			<div id="receiver_errors" class="error-block" style="display: none;"></div><!-- /.error-block -->
-		</div>
 
-		<div class="form-group w-100">
-		
-			<button style="background:<?php echo $cor;?> !important;" id="buttonx" type="button" onclick="chk()" class="btn btn-primary btn-block btn-send">Salvar</button>
-		</div>
+			<div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+				<div style="display: flex; align-items: center; gap: 10px;">
+					<label class="switch" style="position: relative; display: inline-block; width: 40px; height: 20px;">
+					  <input type="checkbox" id="condominio" style="opacity: 0; width: 0; height: 0;">
+					  <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; border-radius: 34px;"></span>
+					</label>
+					<span style="font-size: 14px; color: #333;">Fica em um condomínio fechado</span>
+				</div>
+				<div style="display: flex; align-items: center; gap: 10px;">
+					<label class="switch" style="position: relative; display: inline-block; width: 40px; height: 20px;">
+					  <input type="checkbox" id="portaria" style="opacity: 0; width: 0; height: 0;">
+					  <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; border-radius: 34px;"></span>
+					</label>
+					<span style="font-size: 14px; color: #333;">É possível deixar pacotes na portaria</span>
+				</div>
+			</div>
 
-		
+			<div class="form-group w-100">
+				<label for="referencia" class="label-control block" style="font-weight: 500; font-size: 14px; margin-bottom: 5px;">Referência</label>
+				<textarea id="referencia" placeholder="QD 29 LOTE 19" style="width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 10px; font-size: 14px; height: 80px; resize: none;"></textarea>
+				<div style="text-align: right; font-size: 11px; color: #999; margin-top: 2px;">13 / 255</div>
+			</div>
 
-	</div><!-- /.group-form -->
+			<div class="form-group w-100" style="margin-top: 15px;">
+				<button style="background: #3483fa !important; color: #fff !important; border: none !important; border-radius: 6px !important; padding: 14px !important; font-size: 16px !important; font-weight: 500 !important; cursor: pointer !important; width: 100% !important;" id="buttonx" type="button" onclick="chk()" class="btn btn-primary btn-block btn-send">Salvar</button>
+			</div>
+			<div class="form-group w-100" style="margin-top: 10px;">
+				<button style="background: #e6f0fa; color: #3483fa; border: none; border-radius: 6px; padding: 14px; font-size: 16px; font-weight: 500; cursor: pointer; width: 100%;" type="button" onclick="document.getElementById('checkout-parte-2').style.display='none';">Cancelar</button>
+			</div>
+		</div><!-- /#checkout-parte-2 -->
+
+	<style>
+		.slider:before {
+			position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; -webkit-transition: .4s; transition: .4s; border-radius: 50%;
+		}
+		input:checked + .slider { background-color: #3483fa; }
+		input:checked + .slider:before { -webkit-transform: translateX(20px); -ms-transform: translateX(20px); transform: translateX(20px); }
+		.error-block { display: none; }
+		.holder-input.invalid { border-color: #e53935; }
+		.input-validate.required { border: 1px solid #ccc; }
+		.tipo-local-btn.active { border-color: #3483fa !important; background-color: #f5f9ff !important; }
+	</style>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const cepInput = document.getElementById('zipcode');
+			const parte2 = document.getElementById('checkout-parte-2');
+			
+			// Detecta preenchimento do CEP para mostrar a parte 2
+			cepInput.addEventListener('input', function() {
+				let val = this.value.replace(/\D/g, '');
+				if (val.length >= 8) {
+					// Simula um delay rápido pro CEP preencher os dados
+					setTimeout(() => {
+						parte2.style.display = 'block';
+						parte2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+					}, 800);
+				} else {
+					parte2.style.display = 'none';
+				}
+			});
+
+			// Checkbox Sem numero
+			document.getElementById('no_number').addEventListener('change', function() {
+				let numberInput = document.getElementById('number');
+				if(this.checked) {
+					numberInput.value = 'SN';
+					numberInput.setAttribute('readonly', 'true');
+				} else {
+					if(numberInput.value === 'SN') numberInput.value = '';
+					numberInput.removeAttribute('readonly');
+				}
+			});
+
+			// Botões de tipo de local
+			const tipoBotoes = document.querySelectorAll('.tipo-local-btn');
+			tipoBotoes.forEach(btn => {
+				btn.addEventListener('click', function() {
+					tipoBotoes.forEach(b => b.classList.remove('active'));
+					this.classList.add('active');
+					this.style.borderColor = '#3483fa';
+					tipoBotoes.forEach(b => { if(!b.classList.contains('active')) b.style.borderColor = '#ccc'; });
+				});
+			});
+		});
+	</script>
 
 	<input type="hidden" name="_token" value="1zQHURLDA2FeTQDenT5uhovY1bTXVgQyqCuAmZ0o">
 </form>
