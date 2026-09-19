@@ -154,76 +154,178 @@ $textozap = isset($textozap) ? $textozap : '';
 
     <main class="checkout-wrap">
         <h1 class="page-title">Editar endereço</h1>
-        <section class="form-card">
+        <section class="form-card" style="padding: 0;">
             <form id="formAddress" onsubmit="proceed(); return false;">
-                <div class="zip-row form-group full">
-                    <div>
-                        <label class="form-label" for="cep">Informe o seu CEP</label>
-                        <input type="text" id="cep" class="form-control" placeholder="Informe o seu CEP" inputmode="numeric" required>
-                    </div>
-                    <button type="button" class="cep-help" onclick="window.open('https://buscacepinter.correios.com.br/app/endereco/index.php', '_blank')">Não sei meu CEP</button>
-                </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="rua">Rua / Avenida</label>
-                        <input type="text" id="rua" class="form-control" placeholder="Ex: Av. das Nações Unidas" required>
-                    </div>
-                    <div class="form-group">
-                        <div class="number-row">
-                            <div>
-                                <label class="form-label" for="numero">Número</label>
-                                <input type="text" id="numero" class="form-control" placeholder="Ex: 123" required>
-                            </div>
-                            <label class="no-number" for="semNumero"><span>Sem número</span><input type="checkbox" id="semNumero" onchange="toggleNum(this)"></label>
+                
+                <!-- PARTE 1: Visível por padrão -->
+                <div id="checkout-parte-1" style="padding: 28px 46px 10px;">
+                    <!-- CEP -->
+                    <div class="form-group full" style="position: relative; margin-bottom: 20px;">
+                        <label class="form-label" for="cep" style="font-weight: 500;">CEP</label>
+                        <div style="position: relative;">
+                            <input type="text" id="cep" class="form-control" placeholder="Ex.: 05410001" inputmode="numeric" required style="padding-right: 120px;">
+                            <button type="button" class="cep-help" onclick="window.open('https://buscacepinter.correios.com.br/app/endereco/index.php', '_blank')" style="position: absolute; right: 10px; top: 0; bottom: 0; height: 100%; color: var(--store-blue); font-weight: 500;">Não sei meu CEP</button>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="complemento">Complemento (opcional)</label>
-                        <input type="text" id="complemento" class="form-control" placeholder="Ex: Apto 12">
+
+                    <!-- RUA / AVENIDA -->
+                    <div class="form-group full" style="margin-bottom: 20px;">
+                        <label class="form-label" for="rua" style="font-weight: 500;">Rua / Avenida</label>
+                        <input type="text" id="rua" class="form-control" placeholder="Ex: Av. das Nações Unidas" required>
                     </div>
-                    <div class="form-group hidden-product">
+
+                    <!-- NÚMERO e COMPLEMENTO -->
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                        <div class="form-group" style="position: relative;">
+                            <label class="form-label" for="numero" style="font-weight: 500;">Número</label>
+                            <input type="text" id="numero" class="form-control" placeholder="Ex: 123" required>
+                            <label class="no-number" for="semNumero" style="position: absolute; right: 10px; top: 28px; font-size: 13px; color: #999; display: flex; align-items: center; gap: 5px;">
+                                Sem número <input type="checkbox" id="semNumero" onchange="toggleNum(this)" style="width: 16px; height: 16px;">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="complemento" style="font-weight: 500;">Complemento <span style="color:#999;font-weight:normal;">(opcional)</span></label>
+                            <input type="text" id="complemento" class="form-control" placeholder="Ex: Apto 12">
+                        </div>
+                    </div>
+
+                    <!-- CAMPOS OCULTOS -->
+                    <div class="hidden-product">
                         <input type="text" id="bairro">
                         <input type="text" id="cidade">
                         <input type="text" id="estado">
                     </div>
-                    <div class="form-group full">
-                        <label class="form-label" for="referencia">Informações adicionais (opcional)</label>
-                        <textarea id="referencia" class="form-control textarea-control" maxlength="128" placeholder="Ex: Casa azul, fundos"></textarea>
-                    </div>
-                </div>
 
-                <p class="section-question">É trabalho ou casa?</p>
-                <div class="address-type">
-                    <label class="radio-card"><input type="radio" name="tipo" value="casa" checked><span class="radio-icon"><i class="fa-solid fa-house"></i></span><span>Casa</span></label>
-                    <label class="radio-card"><input type="radio" name="tipo" value="trabalho"><span class="radio-icon"><i class="fa-solid fa-briefcase"></i></span><span>Trabalho</span></label>
-                </div>
+                    <!-- DADOS DE QUEM VAI RECEBER -->
+                    <div style="margin-top: 10px;">
+                        <h2 class="contact-title" style="font-size: 16px; margin-bottom: 4px;">Dados de quem vai receber</h2>
+                        <p class="contact-subtitle" style="font-size: 13px; margin-bottom: 20px;">Ligaremos se houver algum problema com a entrega.</p>
+                        
+                        <div class="form-group full" style="margin-bottom: 20px;">
+                            <label class="form-label" for="nome" style="font-weight: 500;">Nome completo</label>
+                            <input type="text" id="nome" class="form-control" required>
+                        </div>
 
-                <h2 class="contact-title">Dados de contato</h2>
-                <p class="contact-subtitle">Usaremos esses dados apenas para a entrega</p>
+                        <div class="form-group full" style="margin-bottom: 20px;">
+                            <label class="form-label" for="telefone" style="font-weight: 500;">Telefone de contato</label>
+                            <div style="display: flex; align-items: center; border: 1px solid #bfbfbf; border-radius: 6px; overflow: hidden; height: 40px; background: #fff;">
+                                <span style="background: #f5f5f5; padding: 0 12px; font-size: 15px; color: #333; height: 100%; display: flex; align-items: center; border-right: 1px solid #bfbfbf;">BR+55</span>
+                                <input type="tel" id="telefone" class="form-control" placeholder="(11) 96123-4567" required style="border: none; border-radius: 0; outline: none; box-shadow: none;">
+                            </div>
+                        </div>
 
-                <div class="form-grid">
-                    <div class="form-group full">
-                        <label class="form-label" for="nome">Nome completo</label>
-                        <input type="text" id="nome" class="form-control" required>
+                        <div class="form-group full" style="margin-bottom: 20px; display: none;">
+                            <label class="form-label" for="email">E-mail</label>
+                            <input type="email" id="email" class="form-control" placeholder="Ex: seu@email.com" value="cliente@email.com">
+                        </div>
+                        <div class="form-group full" style="margin-bottom: 20px; display: none;">
+                            <label class="form-label" for="cpf">CPF</label>
+                            <input type="text" id="cpf" class="form-control" inputmode="numeric" value="000.000.000-00">
+                        </div>
                     </div>
-                    <div class="form-group full">
-                        <label class="form-label" for="email">E-mail</label>
-                        <input type="email" id="email" class="form-control" placeholder="Ex: seu@email.com" required>
-                    </div>
-                    <div class="form-group full">
-                        <label class="form-label" for="cpf">CPF</label>
-                        <input type="text" id="cpf" class="form-control" inputmode="numeric" required>
-                    </div>
-                    <div class="form-group full">
-                        <label class="form-label" for="telefone">Telefone de contato</label>
-                        <input type="text" id="telefone" class="form-control" inputmode="tel" required>
-                    </div>
-                </div>
+                </div><!-- /#checkout-parte-1 -->
 
-                <button type="submit" class="save-btn">Salvar</button>
+                <!-- PARTE 2: Inicialmente oculta, exibe após o CEP -->
+                <div id="checkout-parte-2" style="display: none; padding: 0 46px 30px; border-top: 1px solid #eee; margin-top: 10px; padding-top: 30px;">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 4px; color: #333;">Conte mais sobre seu endereço</h3>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Nos ajuda a encontrar você com mais facilidade na hora da entrega</p>
+                    
+                    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="tipo-local-btn active" style="flex: 1; border: 1px solid var(--store-blue); border-radius: 8px; padding: 18px 15px; cursor: pointer; text-align: left; background-color: #f5f9ff;" onclick="document.getElementById('radio_casa').checked = true;">
+                            <i class="fa-solid fa-house" style="font-size: 24px; color: #333; margin-bottom: 12px;"></i>
+                            <div style="font-weight: 600; font-size: 15px; color: #333; margin-bottom: 2px;">Uma residência</div>
+                            <div style="font-size: 12px; color: #888;">Casa, prédio, condomínio</div>
+                            <input type="radio" name="tipo" id="radio_casa" value="casa" checked style="display: none;">
+                        </div>
+                        <div class="tipo-local-btn" style="flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 18px 15px; cursor: pointer; text-align: left;" onclick="document.getElementById('radio_trabalho').checked = true;">
+                            <i class="fa-solid fa-store" style="font-size: 24px; color: #333; margin-bottom: 12px;"></i>
+                            <div style="font-weight: 600; font-size: 15px; color: #333; margin-bottom: 2px;">Um local de trabalho</div>
+                            <div style="font-size: 12px; color: #888;">Loja, escritório, comércio</div>
+                            <input type="radio" name="tipo" id="radio_trabalho" value="trabalho" style="display: none;">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label class="switch-toggle" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                              <input type="checkbox" id="condominio" style="opacity: 0; width: 0; height: 0;">
+                              <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                            </label>
+                            <span style="font-size: 15px; color: #333;">Fica em um condomínio fechado</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label class="switch-toggle" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                              <input type="checkbox" id="portaria" style="opacity: 0; width: 0; height: 0;">
+                              <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                            </label>
+                            <span style="font-size: 15px; color: #333;">É possível deixar pacotes na portaria</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group full" style="margin-bottom: 30px;">
+                        <label class="form-label" for="referencia" style="font-weight: 500;">Referência</label>
+                        <textarea id="referencia" class="form-control textarea-control" maxlength="128" placeholder="Ex: Casa azul, de esquina" style="height: 80px;"></textarea>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button type="submit" class="save-btn" style="width: 100%; height: 48px; font-size: 16px; margin: 0;">Salvar</button>
+                        <button type="button" class="cancel-btn" style="width: 100%; height: 48px; font-size: 16px; margin: 0; background: #e6f0fa; color: var(--store-blue); border: none; border-radius: 6px; font-weight: 600; cursor: pointer;" onclick="document.getElementById('checkout-parte-2').style.display='none';">Cancelar</button>
+                    </div>
+                </div><!-- /#checkout-parte-2 -->
+
             </form>
         </section>
+
+        <style>
+            .switch-toggle .slider:before {
+                position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%;
+            }
+            .switch-toggle input:checked + .slider { background-color: var(--store-blue); }
+            .switch-toggle input:checked + .slider:before { transform: translateX(20px); }
+            
+            /* Ajustes Mobile para o Form */
+            @media (max-width: 767px) {
+                #checkout-parte-1 { padding: 22px 16px 10px !important; }
+                #checkout-parte-2 { padding: 0 16px 24px !important; }
+                .form-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+                .tipo-local-btn { padding: 12px !important; }
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const cepInput = document.getElementById('cep');
+                const parte2 = document.getElementById('checkout-parte-2');
+                
+                // Mostrar a parte 2 quando o CEP estiver completo
+                cepInput.addEventListener('keyup', function() {
+                    let val = this.value.replace(/\D/g, '');
+                    if (val.length >= 8) {
+                        setTimeout(() => {
+                            parte2.style.display = 'block';
+                            parte2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 800); // delay para dar tempo do viacep
+                    } else {
+                        parte2.style.display = 'none';
+                    }
+                });
+
+                // Lógica dos botões de Tipo de Local
+                const tipoBotoes = document.querySelectorAll('.tipo-local-btn');
+                tipoBotoes.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        tipoBotoes.forEach(b => {
+                            b.classList.remove('active');
+                            b.style.borderColor = '#ddd';
+                            b.style.backgroundColor = '#fff';
+                        });
+                        this.classList.add('active');
+                        this.style.borderColor = 'var(--store-blue)';
+                        this.style.backgroundColor = '#f5f9ff';
+                    });
+                });
+            });
+        </script>
     </main>
 
     <footer class="footer-main">
