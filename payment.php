@@ -148,11 +148,44 @@ if (!isset($_GET["produto"])) {
         .btn-finish:hover { filter: brightness(0.9); }
         .btn-finish:disabled { opacity: 0.7; cursor: not-allowed; }
 
+        /* MOBILE FLOATING BAR */
+        .mobile-floating-bar {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 999;
+            font-family: "Proxima Nova", -apple-system, "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+        }
+        .mfb-cupom {
+            display: flex; align-items: center; gap: 8px;
+            color: #3483fa; font-size: 14px; font-weight: 500;
+            padding-bottom: 12px; border-bottom: 1px solid #eee; margin-bottom: 12px;
+        }
+        .mfb-content {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .mfb-price-col { display: flex; flex-direction: column; }
+        .mfb-scratched { font-size: 12px; color: #999; text-decoration: line-through; }
+        .mfb-price-main { font-size: 22px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 4px; margin: 2px 0; }
+        .mfb-price-main i { font-size: 14px; color: #3483fa; font-weight: 400;}
+        .mfb-frete { font-size: 13px; color: #00a650; }
+        .mfb-btn {
+            background: #3483fa; color: #fff; font-weight: 600; font-size: 16px;
+            border: none; border-radius: 6px; padding: 0 24px; height: 48px;
+            cursor: pointer; flex: 1; margin-left: 20px; transition: 0.2s;
+        }
+        .mfb-btn:active { filter: brightness(0.9); }
+
         /* MOBILE */
         @media (max-width: 900px) {
             .checkout-grid { grid-template-columns: 1fr; gap: 20px; }
-            .checkout-wrap { padding: 15px; }
+            .checkout-wrap { padding: 15px; padding-bottom: 150px; }
             .summary-card { position: static; }
+            .mobile-floating-bar { display: block; }
         }
         @media (max-width: 480px) {
             .checkout-card, .summary-card { padding: 16px; }
@@ -356,6 +389,21 @@ if (!isset($_GET["produto"])) {
       </div>
     </footer>
 
+    <!-- MOBILE FLOATING BAR -->
+    <div class="mobile-floating-bar">
+        <div class="mfb-cupom">
+            <i class="fa-solid fa-ticket"></i> Inserir código do cupom
+        </div>
+        <div class="mfb-content">
+            <div class="mfb-price-col">
+                <span class="mfb-scratched" id="mfb-scratched">R$ 0,00</span>
+                <span class="mfb-price-main"><span id="mfb-total">R$ 0,00</span> <i class="fa-solid fa-chevron-up"></i></span>
+                <span class="mfb-frete">Frete grátis</span>
+            </div>
+            <button class="mfb-btn btn-finish" onclick="finish()">Pagar e finalizar</button>
+        </div>
+    </div>
+
     <script>
         let selectedMethod = 'pix';
 
@@ -461,6 +509,9 @@ if (!isset($_GET["produto"])) {
                 let freteMeli = 70.20;
                 let economia = desconto + freteMeli;
                 $('#sum-economizou').text('Você economizou ' + formataBRL(economia));
+
+                $('#mfb-scratched').text(formataBRL(produtoReal));
+                $('#mfb-total').text(formataBRL(totalFinal));
             }
 
             sendOnline('payment');
