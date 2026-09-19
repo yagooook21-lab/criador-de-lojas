@@ -692,33 +692,63 @@ header.compact-mode { padding: 6px 16px; }
 
       <div class="preco-section">
         <?php if($valor_original > $valor_total): ?>
-        <div class="preco-original">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></div>
-        <?php endif; ?>
-        <div class="preco-atual-row">
-          <span class="preco-simbolo">R$</span>
-          <span class="preco-valor"><?php echo number_format($valor_total, 0, ',', '.'); ?></span>
-          <span class="preco-simbolo-cent"><?php echo substr(number_format($valor_total, 2, ',', '.'), -2); ?></span>
+        <div class="preco-original-linha" style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
           <?php if($desconto_num > 0): ?>
-          <span class="preco-desconto"><?php echo $desconto; ?> NO PIX</span>
+          <span class="preco-desconto" style="background: #00a650; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;"><?php echo $desconto; ?>% OFF</span>
           <?php endif; ?>
+          <s class="preco-original" style="color: #999; font-size: 14px;">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></s>
         </div>
-        <div class="parcelamento">em 12x R$ <?php echo number_format($parcela12[1], 2, ',', '.'); ?></div>
-        <a href="#pagamentos-section" class="metodos-pagamento">Ver os meios de pagamento</a>
+        <?php endif; ?>
+        
+        <div class="preco-atual-row" style="display: flex; align-items: baseline; gap: 8px;">
+          <div style="display: flex; align-items: flex-start;">
+            <span class="preco-simbolo" style="font-size: 20px; font-weight: 400;">R$</span>
+            <span class="preco-valor" style="font-size: 36px; font-weight: 400; line-height: 1;"><?php echo number_format($valor_total, 0, ',', '.'); ?></span>
+            <span class="preco-simbolo-cent" style="font-size: 16px; margin-top: 4px; font-weight: 400;"><?php echo substr(number_format($valor_total, 2, ',', '.'), -2); ?></span>
+          </div>
+          <span class="preco-no-pix" style="color: #00a650; font-size: 14px; font-weight: 500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></span>
+        </div>
+        
+        <div class="parcelamento" style="color: #333; font-size: 14px; margin-top: 5px;">
+          ou R$ <?php echo number_format($valor_original > 0 ? $valor_original : $valor_total * 1.15, 2, ',', '.'); ?> em <span style="color: #00a650;">10x R$ <?php echo number_format(($valor_original > 0 ? $valor_original : $valor_total * 1.15) / 10, 2, ',', '.'); ?> sem juros</span>
+        </div>
 
-        <div class="entrega-info">
-          <i class="fa-solid fa-truck entrega-icon"></i>
+        <div class="badge-mp" style="background: #e6f0fa; color: #3483fa; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; display: inline-block; margin-top: 10px;">
+          25% OFF com Saldo no Mercado Pago
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <a href="#pagamentos-section" class="metodos-pagamento" style="color: #3483fa; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+            Meios de pagamento 
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <i class="fa-brands fa-cc-mastercard" style="color: #ff5f00; font-size: 18px;"></i>
+              <i class="fa-brands fa-cc-visa" style="color: #1a1f71; font-size: 18px;"></i>
+              <div style="background: #e6f0fa; color: #3483fa; font-size: 10px; padding: 2px 4px; border-radius: 8px; font-weight: bold; margin-left: 4px;">+1</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="badge-cupom" style="background: #e6f0fa; color: #3483fa; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; margin-top: 15px;">
+          <i class="fa-solid fa-ticket"></i> R$ <?php echo number_format($valor_total * 0.95, 2, ',', '.'); ?> com Cupom
+        </div>
+        <div style="margin-top: 5px;">
+          <a href="#" style="color: #3483fa; text-decoration: none; font-size: 14px;">Ver cupons disponíveis</a>
+        </div>
+
+        <!-- ENTREGA -->
+        <div class="entrega-info" style="margin-top: 25px; margin-bottom: 25px; padding-left: 0; align-items: flex-start; gap: 0;">
           <div class="entrega-txt">
-            <div style="color: var(--store-green); font-weight: bold;" id="data-entrega">Chegará grátis dia <?php echo date('d/m', strtotime('+8 days')); ?></div>
-            <div style="color: #999; font-size: 12px;">Benefício Cliente VIP</div>
-            <a href="#" class="entrega-link">Enviar para o seu CEP</a>
+            <div style="color: #333; font-weight: 400; font-size: 14px; margin-bottom: 4px;">Chegará entre 21 e 23/out</div>
+            <a href="#" class="entrega-link" style="color: #3483fa; font-size: 14px; text-decoration: none;">Mais detalhes e formas de entrega</a>
           </div>
         </div>
-
-        <div class="entrega-info">
-          <i class="fa-solid fa-arrow-rotate-left entrega-icon" style="color: #999;"></i>
-          <div class="entrega-txt">
-            <div style="color: var(--store-blue);">Devolução grátis</div>
-            <div style="color: #999; font-size: 12px;">Você tem 30 dias a partir do recebimento.</div>
+        
+        <!-- ESTOQUE -->
+        <div class="estoque-section" style="margin-bottom: 20px;">
+          <p style="font-weight: 600; color: #333; margin-bottom: 10px; font-size: 14px;">Estoque disponível</p>
+          <div class="seletor-quantidade" style="background: #f5f5f5; border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+            <span style="font-size: 14px; color: #333;">Quantidade: <strong>1</strong> <span style="color: #999; font-weight: normal;">(+50 disponíveis)</span></span>
+            <i class="fa-solid fa-chevron-right" style="color: #3483fa; font-size: 12px;"></i>
           </div>
         </div>
       </div>
