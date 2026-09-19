@@ -1050,6 +1050,7 @@ function expandirCaracteristicas() {
 	const codigoProduto = <?php echo json_encode($codigo); ?>;
 	const nomeProdutoOriginal = <?php echo json_encode($nomeproduto); ?>;
 	const precoProdutoFormatado = <?php echo json_encode(number_format($valor_total, 2, ',', '.')); ?>;
+	const precoOriginalFormatado = <?php echo json_encode(number_format($valor_original, 2, ',', '.')); ?>;
 	const imagemProdutoOriginal = <?php echo json_encode($todas_imgs[0]); ?>;
 	let variacoesSelecionadas = {};
 
@@ -1058,7 +1059,8 @@ function expandirCaracteristicas() {
 	        produto: codigoProduto,
 	        quantos: 1,
 	        precoFinal: precoProdutoFormatado,
-	        precoUnitario: precoProdutoFormatado
+	        precoUnitario: precoProdutoFormatado,
+            precoOriginal: precoOriginalFormatado
 	    };
 	    localStorage.setItem('lojavirtual', JSON.stringify(dadosCarrinho));
 	    localStorage.setItem('variacoes_selecionadas', JSON.stringify(variacoesSelecionadas));

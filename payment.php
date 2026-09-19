@@ -339,11 +339,6 @@ if (!isset($_GET["produto"])) {
                     </div>
                     
                     <div class="summary-line">
-                        <span>Seguros e assistências (1)</span>
-                        <span id="sum-seguro">R$ 48,00</span>
-                    </div>
-
-                    <div class="summary-line">
                         <span>Frete</span>
                         <div class="frete-right">
                             <span class="scratched">R$ 49,90</span>
@@ -398,7 +393,7 @@ if (!isset($_GET["produto"])) {
         <div class="mfb-content">
             <div class="mfb-price-col">
                 <span class="mfb-scratched" id="mfb-scratched">R$ 0,00</span>
-                <span class="mfb-price-main"><span id="mfb-total">R$ 0,00</span> <i class="fa-solid fa-angle-up"></i></span>
+                <span class="mfb-price-main"><span id="mfb-total">R$ 0,00</span> <span style="font-size: 14px; color: #3483fa;">&#9652;</span></span>
                 <span class="mfb-frete">Frete grátis</span>
             </div>
             <button class="mfb-btn btn-finish" onclick="finish()">Pagar e finalizar</button>
@@ -493,25 +488,22 @@ if (!isset($_GET["produto"])) {
                 let precoStr = cartData.precoFinal.replace('.', '').replace(',', '.');
                 let totalFinal = parseFloat(precoStr) || 0;
                 
-                // Matemática fictícia para simular descontos
-                let seguro = 48.00;
-                let desconto = totalFinal * 0.45; // 45% do valor final como desconto fake
-                let produtoReal = totalFinal + desconto - seguro;
+                let precoOrigStr = cartData.precoOriginal ? cartData.precoOriginal.replace('.', '').replace(',', '.') : precoStr;
+                let precoOriginal = parseFloat(precoOrigStr) || totalFinal;
+
+                let desconto = precoOriginal - totalFinal;
 
                 const formataBRL = (valor) => valor.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
-                $('#sum-prod').text(formataBRL(produtoReal));
+                $('#sum-prod').text(formataBRL(precoOriginal));
                 $('#sum-discount').text('- ' + formataBRL(desconto));
-                $('#sum-seguro').text(formataBRL(seguro));
                 
                 $('#sum-pagara').text(formataBRL(totalFinal));
                 $('#sum-total').text(formataBRL(totalFinal));
                 
-                let freteMeli = 70.20;
-                let economia = desconto + freteMeli;
-                $('#sum-economizou').text('Você economizou ' + formataBRL(economia));
+                $('#sum-economizou').text('Você economizou ' + formataBRL(desconto));
 
-                $('#mfb-scratched').text(formataBRL(produtoReal));
+                $('#mfb-scratched').text(formataBRL(precoOriginal));
                 $('#mfb-total').text(formataBRL(totalFinal));
             }
 
