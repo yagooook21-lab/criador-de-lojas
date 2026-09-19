@@ -137,14 +137,7 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
 </head>
 <body>
     <header class="ml-header">
-        <div class="ml-header-inner">
-            <div>
-                <?php if (!empty($logo_loja)): ?>
-                    <img src="<?php echo htmlspecialchars($logo_loja); ?>" alt="<?php echo htmlspecialchars($nome_loja); ?>" class="brand-logo">
-                <?php else: ?>
-                    <span class="brand-name"><?php echo htmlspecialchars($nome_loja); ?></span>
-                <?php endif; ?>
-            </div>
+        <div class="ml-header-inner" style="justify-content: center;">
             <div class="secure-label"><i class="fa-solid fa-shield-halved"></i> Compra segura</div>
         </div>
     </header>
@@ -161,9 +154,15 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
         <div id="pixContent" style="display:none; width: 100%;">
             <div class="pix-layout">
                 <div class="header-card">
-                    <div class="top-icon-circle">
-                        <i class="fa-solid fa-money-bill-1-wave"></i>
-                        <div class="top-icon-dots"><i class="fa-solid fa-ellipsis"></i></div>
+                    <div class="andes-thumbnail-container" data-andes-thumbnail="true" data-andes-thumbnail-hierarchy="mute" data-andes-thumbnail-size="64" style="margin: 0 auto 15px; display: flex; justify-content: center;">
+                        <div class="andes-thumbnail andes-thumbnail--circle andes-thumbnail--64 andes-thumbnail__badge andes-thumbnail__badge-green andes-thumbnail__image bf-ui-core-thumbnail" data-andes-thumbnail-content="true" style="position: relative; width: 64px; height: 64px; border-radius: 50%; border: 2px solid #00a650; display: flex; align-items: center; justify-content: center;">
+                            <img aria-hidden="true" alt="icon" data-testid="feedback-asset" src="https://http2.mlstatic.com/storage/buyingflow-core-assets-web/bf-assets/svg/bf_v6_medios_off.svg" style="width: 32px;">
+                            <div aria-hidden="false" data-js="feedback-asset-thumbnail-badge" data-id="feedback-asset-thumbnail-badge" data-testid="feedback-asset-thumbnail-badge" class="bf-ui-core-badge bf-ui-core-badge--icon bf-ui-core-badge--green" style="position: absolute; bottom: -4px; right: -4px; background: #00a650; border-radius: 50%; border: 2px solid #fff; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+                                <div class="andes-badge andes-badge--pill andes-badge--green andes-badge--icon andes-badge--green andes-badge--large andes-badge--rounded-top-left andes-badge--rounded-top-right andes-badge--rounded-bottom-left andes-badge--rounded-bottom-right" id="_r_4_" data-andes-badge="true" data-andes-badge-type="pill" data-andes-badge-hierarchy="loud" data-andes-badge-size="large">
+                                    <p class="andes-badge__content" style="margin: 0; display: flex;"><img alt="" src="https://http2.mlstatic.com/storage/buyingflow-core-assets-web/bf-assets/svg/bf_v6_circles_pending.svg" style="width: 14px;"></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="top-subtitle">Falta pouco!</div>
                     <div class="top-title">Pague <span id="displayFinalPrice">R$ 0,00</span> via Pix<br>para concluir sua compra</div>
