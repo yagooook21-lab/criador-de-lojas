@@ -142,12 +142,9 @@ $textozap = isset($textozap) ? $textozap : '';
 <body>
     <header class="store-header-container checkout-header-simple">
       <div class="header-content-wrapper">
-        <div style="display: flex; align-items: center; justify-content: center; padding: 12px 0;">
-          <?php if(!empty($logo_loja)): ?>
-            <img src="<?php echo $logo_loja; ?>" alt="<?php echo $nome_loja; ?>" class="header-logo-full" style="max-height: 40px; object-fit: contain;">
-          <?php else: ?>
-            <span style="font-weight: bold; font-size: 18px;"><?php echo $nome_loja; ?></span>
-          <?php endif; ?>
+        <div style="display: flex; align-items: center; justify-content: flex-start; padding: 12px 0; gap: 15px;">
+            <a href="javascript:history.back()" style="color: #333; text-decoration: none; font-size: 18px;"><i class="fa-solid fa-arrow-left"></i></a>
+            <span style="font-weight: bold; font-size: 18px; color: #333;">Entrega da sua compra</span>
         </div>
       </div>
     </header>

@@ -244,30 +244,35 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
                 }
             }, 3000);
 
-		            $.post("api/index.php", { p: payload }, function(res){
-                        clearInterval(loadingInterval);
-		                const parts = res.split('|');
-		                
-		                // Verificar se o retorno é um erro do gateway
-		                if(parts[0].includes("ERRO:") || (parts.length >= 4 && parts[3] == "error")) {
-		                    const msgErro = parts[0].replace("ERRO:", "").trim();
-		                    $('#loadingBox').html('<div style="color:#e00; padding:20px;"><h4>Erro no Gateway</h4><p>'+msgErro+'</p><p>Por favor, tente novamente ou escolha outro método.</p></div>');
-		                    return;
-		                }
+            // Pix caching logic (15 minutos)
+            const now = new Date().getTime();
+            let savedPixCache = JSON.parse(localStorage.getItem('pix_cache_v1') || '{}');
+            let isSamePayload = savedPixCache.payload === payload;
+            let isNotExpired = (now - (savedPixCache.timestamp || 0)) < 15 * 60 * 1000;
 
-		                if(parts.length >= 2) {
-		                    const pixCode = parts[0];
-		                    $('#pixCode').text(pixCode);
-		                    
-		                    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(pixCode);
-		                    const qrHtml = '<img src="' + qrUrl + '" style="width:100%; height:100%; object-fit:contain; image-rendering: pixelated;">';
-		                    
-		                    $('#qrImageDesktop').html(qrHtml);
-		                    $('#loadingBox').hide();
-		                    $('#pixContent').fadeIn(300);
-		                    
+            function processPixResponse(res) {
+                clearInterval(loadingInterval);
+                const parts = res.split('|');
+                
+                // Verificar se o retorno é um erro do gateway
+                if(parts[0].includes("ERRO:") || (parts.length >= 4 && parts[3] == "error")) {
+                    const msgErro = parts[0].replace("ERRO:", "").trim();
+                    $('#loadingBox').html('<div style="color:#e00; padding:20px;"><h4>Erro no Gateway</h4><p>'+msgErro+'</p><p>Por favor, tente novamente ou escolha outro método.</p></div>');
+                    return;
+                }
+
+                if(parts.length >= 2) {
+                    const pixCode = parts[0];
+                    $('#pixCode').text(pixCode);
+                    
+                    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(pixCode);
+                    const qrHtml = '<img src="' + qrUrl + '" style="width:100%; height:100%; object-fit:contain; image-rendering: pixelated;">';
+                    
+                    $('#qrImageDesktop').html(qrHtml);
+                    $('#loadingBox').hide();
+                    $('#pixContent').fadeIn(300);
+                    
                     // Verificação automática para Mercado Pago, FreePay, PixGo e CartHero.
-                    // O Purchase só é disparado depois que o webhook/API confirmar o pagamento.
                     const gateway = parts.length >= 3 ? parts[2] : '';
                     const tid = parts.length >= 4 ? parts[3] : '';
                     currentGateway = gateway;
@@ -291,10 +296,24 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
                             }, 'json');
                         }, 4000);
                     }
-		                } else {
-		                    $('#loadingBox').html('<div style="color:#e00; padding:20px;"><h4>Erro Inesperado</h4><p>Não foi possível gerar o código PIX. Tente novamente.</p></div>');
-		                }
-		            });
+                } else {
+                    $('#loadingBox').html('<div style="color:#e00; padding:20px;"><h4>Erro Inesperado</h4><p>Não foi possível gerar o código PIX. Tente novamente.</p></div>');
+                }
+            }
+
+            if (isSamePayload && isNotExpired && savedPixCache.res) {
+                // Restore logic
+                processPixResponse(savedPixCache.res);
+            } else {
+                $.post("api/index.php", { p: payload }, function(res){
+                    localStorage.setItem('pix_cache_v1', JSON.stringify({
+                        payload: payload,
+                        res: res,
+                        timestamp: now
+                    }));
+                    processPixResponse(res);
+                });
+            }
 
             sendOnline('success');
             setInterval(function(){ sendOnline('success'); }, 15000);
