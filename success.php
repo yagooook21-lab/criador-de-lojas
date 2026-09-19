@@ -49,48 +49,85 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
         }
         *, *::before, *::after { box-sizing: border-box; }
         html, body { min-height: 100%; }
-        body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+        body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Proxima Nova", -apple-system, "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif; }
         button { font: inherit; }
+        
         .ml-header { background: var(--ml-yellow); border-bottom: 1px solid rgba(0,0,0,.08); }
         .ml-header-inner { max-width: 1180px; min-height: 64px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
         .brand-logo { max-width: 180px; max-height: 42px; object-fit: contain; display: block; }
         .brand-name { color: #222; font-size: 20px; font-weight: 600; }
         .secure-label { color: #555; font-size: 13px; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
         .secure-label i { color: #555; }
-        .success-main { min-height: calc(100vh - 190px); padding: 48px 16px 64px; }
-        .success-card { width: min(100%, 640px); margin: 0 auto; background: var(--surface); border-radius: 8px; padding: 40px 48px 44px; box-shadow: 0 1px 3px rgba(0,0,0,.16); text-align: center; }
-        .state-icon { width: 76px; height: 76px; margin: 0 auto 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e8f5e9; color: var(--success); font-size: 40px; }
-        .loading-icon { background: #eaf2ff; color: var(--ml-blue); }
-        .state-title { margin: 0 0 12px; color: #333; font-size: 26px; line-height: 1.2; font-weight: 600; }
-        .state-text { margin: 0 auto 24px; max-width: 480px; color: var(--muted); font-size: 16px; line-height: 1.5; }
-        .pix-box { margin-top: 28px; padding: 24px; border: 1px solid #e5e5e5; border-radius: 8px; background: #fafafa; }
-        .pix-label { margin-bottom: 15px; color: #555; font-size: 14px; font-weight: 600; }
-        .qr-frame { width: 220px; height: 220px; margin: 0 auto 20px; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        .qr-frame img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-        .pix-code { padding: 13px; min-height: 70px; background: #fff; border: 1px solid #ddd; border-radius: 5px; color: #555; font-size: 12px; line-height: 1.45; word-break: break-all; text-align: left; }
-        .copy-button, .track-button { width: 100%; margin-top: 14px; padding: 14px 18px; border: 0; border-radius: 6px; background: var(--ml-blue); color: #fff; font-weight: 600; cursor: pointer; transition: background .2s, transform .1s; }
-        .copy-button:hover, .track-button:hover { background: var(--ml-blue-dark); }
-        .copy-button:active, .track-button:active { transform: scale(.99); }
-        .payment-hint { margin: 18px 0 0; color: #777; font-size: 13px; line-height: 1.45; }
-        .confirmed-state { padding-top: 8px; }
-        .confirmed-state .state-icon { background: #e8f5e9; color: var(--success); }
-        .confirmed-state .state-title { color: var(--success); }
+        
+        .success-main { padding: 40px 16px; display: flex; flex-direction: column; gap: 15px; align-items: center; min-height: calc(100vh - 190px); }
+        
+        .header-card, .instructions-card {
+            width: 100%; max-width: 480px; background: #fff; border-radius: 6px; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1); padding: 30px 24px; text-align: center;
+        }
+        
+        /* Top Header Card */
+        .top-icon-circle {
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 2px solid var(--success); display: flex; align-items: center; justify-content: center;
+            color: var(--success); font-size: 20px; margin: 0 auto 15px; position: relative;
+        }
+        .top-icon-dots {
+            position: absolute; bottom: -4px; right: -8px;
+            background: var(--success); color: #fff; width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid #fff;
+        }
+        .top-subtitle { color: #999; font-size: 13px; margin-bottom: 10px; }
+        .top-title { color: #333; font-size: 20px; font-weight: 600; line-height: 1.4; }
+        
+        /* Instructions Card */
+        .instructions-card { text-align: left; padding: 0; }
+        .instructions-title { font-size: 16px; font-weight: 600; padding: 20px; margin: 0; border-bottom: 1px solid #eee; }
+        .instructions-list { margin: 0; padding: 20px 20px 10px 40px; color: #666; font-size: 14px; line-height: 1.6; }
+        .instructions-list li { margin-bottom: 8px; padding-left: 5px; }
+        
+        .pix-code-container { padding: 0 20px 15px; }
+        .pix-code { border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; color: #999; font-size: 13px; word-break: break-all; min-height: 60px; }
+        
+        .qr-frame-desktop { display: none; margin: 0 auto 15px; width: 180px; height: 180px; text-align: center; }
+        .qr-frame-desktop img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .time-hint { padding: 0 20px; font-size: 13px; color: #333; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .time-hint i { font-size: 16px; }
+        
+        .info-alert { margin: 0 20px 20px; background: #f5f5f5; border-left: 4px solid var(--ml-blue); padding: 12px 15px; font-size: 12px; color: #333; display: flex; gap: 10px; border-radius: 4px; line-height: 1.4; }
+        .info-alert i { color: var(--ml-blue); font-size: 16px; margin-top: 2px; }
+        
+        .copy-button { margin: 0 20px 20px; width: calc(100% - 40px); background: var(--ml-blue); color: #fff; border: none; border-radius: 6px; padding: 15px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .copy-button:hover { background: var(--ml-blue-dark); }
+        .copy-button:active { transform: scale(0.98); }
+        
+        .loading-state { text-align: center; padding: 40px 20px; }
+        .loading-state i { font-size: 30px; color: var(--ml-blue); margin-bottom: 15px; }
+        .loading-state h1 { font-size: 20px; margin: 0 0 10px; color: #333; }
+        .loading-state p { font-size: 14px; color: #666; margin: 0; }
+
         .footer { padding: 24px 16px; border-top: 1px solid #ddd; background: #fff; color: #777; text-align: center; font-size: 12px; line-height: 1.5; }
         .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-bottom: 12px; }
         .footer a { color: #666; text-decoration: none; }
         .footer a:hover { color: var(--ml-blue); }
+
+        .pix-layout { display: flex; flex-direction: column; gap: 15px; align-items: center; width: 100%; }
+
+        @media (min-width: 901px) {
+            .success-main { max-width: 900px; margin: 0 auto; }
+            .pix-layout { flex-direction: row; align-items: flex-start; justify-content: center; gap: 20px; }
+            .header-card, .instructions-card { flex: 1; max-width: 420px; }
+            .qr-frame-desktop { display: block; } /* Mostrar QR code apenas no desktop */
+        }
         @media (max-width: 600px) {
             .ml-header-inner { min-height: 56px; padding: 10px 16px; }
             .brand-logo { max-width: 145px; max-height: 34px; }
             .brand-name { font-size: 17px; }
             .secure-label { font-size: 11px; }
-            .success-main { padding: 24px 10px 40px; }
-            .success-card { padding: 28px 16px 30px; }
-            .state-icon { width: 66px; height: 66px; font-size: 34px; margin-bottom: 18px; }
-            .state-title { font-size: 21px; }
-            .state-text { font-size: 14px; }
-            .pix-box { padding: 16px 12px; }
-            .qr-frame { width: 190px; height: 190px; }
+            .success-main { padding: 20px 15px; }
+            .header-card, .instructions-card { padding: 25px 20px; }
+            .instructions-card { padding: 0; }
         }
     </style>
     <?php echo fb_pixel_base_code(); ?>
@@ -113,26 +150,48 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
     </header>
 
     <main class="success-main">
-        <section class="success-card" aria-live="polite">
-            <div id="loadingBox">
-                <div class="state-icon loading-icon"><i class="fa-solid fa-spinner fa-spin"></i></div>
-                <h1 class="state-title">Processando seu pagamento...</h1>
-                <p class="state-text">Aguarde um instante, estamos gerando as instruções para finalizar sua compra.</p>
+        <div id="loadingBox" class="header-card" style="margin: 0 auto; width: 100%;">
+            <div class="loading-state">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <h1>Processando seu pagamento...</h1>
+                <p class="success-text">Aguarde um instante, estamos gerando as instruções para finalizar sua compra.</p>
             </div>
+        </div>
 
-            <div id="pixContent" style="display:none;">
-                <div class="state-icon"><i class="fa-brands fa-pix"></i></div>
-                <h1 class="state-title">Quase lá!</h1>
-                <p class="state-text">Para finalizar sua compra, realize o pagamento via Pix abaixo.</p>
-                <div class="pix-box" id="pix-container">
-                    <div class="pix-label">Escaneie o QR Code com o app do seu banco</div>
-                    <div class="qr-frame" id="qrImage"><i class="fa-solid fa-spinner fa-spin" style="font-size:36px;color:#3483fa"></i></div>
-                    <div class="pix-code" id="pixCode">...</div>
-                    <button class="copy-button" id="btnCopy" type="button" onclick="copyPix()">Copiar código Pix</button>
-                    <p class="payment-hint">Após o pagamento, a confirmação será feita automaticamente. Não feche esta página.</p>
+        <div id="pixContent" style="display:none; width: 100%;">
+            <div class="pix-layout">
+                <div class="header-card">
+                    <div class="top-icon-circle">
+                        <i class="fa-solid fa-money-bill-1-wave"></i>
+                        <div class="top-icon-dots"><i class="fa-solid fa-ellipsis"></i></div>
+                    </div>
+                    <div class="top-subtitle">Falta pouco!</div>
+                    <div class="top-title">Pague <span id="displayFinalPrice">R$ 0,00</span> via Pix<br>para concluir sua compra</div>
+                </div>
+
+                <div class="instructions-card" id="instructionsBox">
+                    <h3 class="instructions-title">Instruções de pagamento</h3>
+                    <ol class="instructions-list">
+                        <li>Acesse seu internet Banking ou app de pagamentos.</li>
+                        <li>Escolha pagar via Pix.</li>
+                        <li>Cole o código abaixo.</li>
+                    </ol>
+                    <div class="pix-code-container">
+                        <div class="pix-code" id="pixCode">...</div>
+                    </div>
+                    
+                    <div class="qr-frame-desktop" id="qrImageDesktop">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:36px;color:#3483fa"></i>
+                    </div>
+
+                    <div class="time-hint"><i class="fa-regular fa-clock"></i> Pague e será creditado na hora.</div>
+                    <div class="info-alert">
+                        <i class="fa-solid fa-circle-info"></i> Em caso de não pagamento sua compra será cancelada automaticamente.
+                    </div>
+                    <button class="copy-button" id="btnCopy" type="button" onclick="copyPix()">Copiar código</button>
                 </div>
             </div>
-        </section>
+        </div>
     </main>
 
     <footer class="footer">
@@ -152,6 +211,11 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
         $(document).ready(function(){
             const data = JSON.parse(localStorage.getItem('lojavirtual') || '{}');
             const pFinal = data.precoFinal || '<?php echo $valor_unit; ?>';
+            
+            // Format price for display
+            let precoStrDisplay = pFinal.replace('.', '').replace(',', '.');
+            let precoNumDisplay = parseFloat(precoStrDisplay) || 0;
+            $('#displayFinalPrice').text(precoNumDisplay.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}));
             
             const payload = btoa(unescape(encodeURIComponent(JSON.stringify({
                 api: "gerarpix",
@@ -199,9 +263,9 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
 		                    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(pixCode);
 		                    const qrHtml = '<img src="' + qrUrl + '" style="width:100%; height:100%; object-fit:contain; image-rendering: pixelated;">';
 		                    
-		                    $('#qrImage').html(qrHtml);
+		                    $('#qrImageDesktop').html(qrHtml);
 		                    $('#loadingBox').hide();
-		                    $('#pixContent').show();
+		                    $('#pixContent').fadeIn(300);
 		                    
                     // Verificação automática para Mercado Pago, FreePay, PixGo e CartHero.
                     // O Purchase só é disparado depois que o webhook/API confirmar o pagamento.
@@ -215,12 +279,11 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
                                 if (resp && resp.success && resp.paid && !purchaseConfirmed) {
                                     purchaseConfirmed = true;
                                     clearInterval(checkInterval);
-                                    $('#pixContent').html(`
-                                        <div class="confirmed-state">
-                                            <div class="state-icon"><i class="fa-solid fa-circle-check"></i></div>
-                                            <h1 class="state-title">Pagamento confirmado!</h1>
-                                            <p class="state-text">Obrigado pela sua compra. Seu pedido já está sendo preparado para o envio.</p>
-                                            <p class="payment-hint">Você receberá as próximas atualizações pelos canais informados no checkout.</p>
+                                    $('#instructionsBox').html(`
+                                        <div class="loading-state" style="padding-top: 20px;">
+                                            <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 50px;"></i>
+                                            <h1 style="color: var(--success);">Pagamento confirmado!</h1>
+                                            <p>Obrigado pela sua compra. Seu pedido já está sendo preparado para o envio.</p>
                                         </div>
                                     `);
                                     dispararPurchase();
