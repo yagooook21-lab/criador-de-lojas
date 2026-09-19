@@ -420,8 +420,8 @@ if (!isset($_GET["produto"])) {
 
             if(cli.nome) {
                 let fat = cli.nome;
-                if(cli.cpf) {
-                    fat += ` - CPF ${cli.cpf}`;
+                if(cli.telefone) {
+                    fat += ` - ${cli.telefone}`;
                 }
                 $('#dyn-faturamento').text(fat);
             }
