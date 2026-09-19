@@ -231,16 +231,24 @@ $textozap = isset($textozap) ? $textozap : '';
                     <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Nos ajuda a encontrar você com mais facilidade na hora da entrega</p>
                     
                     <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-                        <div class="tipo-local-btn active" style="flex: 1; border: 1px solid var(--store-blue); border-radius: 8px; padding: 18px 15px; cursor: pointer; text-align: left; background-color: #f5f9ff;" onclick="document.getElementById('radio_casa').checked = true;">
-                            <i class="fa-solid fa-house" style="font-size: 24px; color: #333; margin-bottom: 12px;"></i>
-                            <div style="font-weight: 600; font-size: 15px; color: #333; margin-bottom: 2px;">Uma residência</div>
-                            <div style="font-size: 12px; color: #888;">Casa, prédio, condomínio</div>
+                        <div class="tipo-local-btn active" style="flex: 1; border: 1px solid #3483FA; box-shadow: 0 0 0 0.5px #3483FA; border-radius: 6px; padding: 16px; cursor: pointer; text-align: left; background-color: #fff;" onclick="document.getElementById('radio_casa').checked = true;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <div style="font-weight: 400; font-size: 15px; color: #333; margin-bottom: 2px;">Uma residência</div>
+                            <div style="font-size: 13px; color: #999;">Casa, prédio, condomínio</div>
                             <input type="radio" name="tipo" id="radio_casa" value="casa" checked style="display: none;">
                         </div>
-                        <div class="tipo-local-btn" style="flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 18px 15px; cursor: pointer; text-align: left;" onclick="document.getElementById('radio_trabalho').checked = true;">
-                            <i class="fa-solid fa-store" style="font-size: 24px; color: #333; margin-bottom: 12px;"></i>
-                            <div style="font-weight: 600; font-size: 15px; color: #333; margin-bottom: 2px;">Um local de trabalho</div>
-                            <div style="font-size: 12px; color: #888;">Loja, escritório, comércio</div>
+                        <div class="tipo-local-btn" style="flex: 1; border: 1px solid #E5E5E5; border-radius: 6px; padding: 16px; cursor: pointer; text-align: left; background-color: #fff;" onclick="document.getElementById('radio_trabalho').checked = true;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+                                <path d="M3 7v14h18V7"></path>
+                                <path d="M3 7l2-4h14l2 4"></path>
+                                <path d="M3 7c0 1.5 1.5 3 3 3s3-1.5 3-3 3 1.5 3 3 3-1.5 3-3 3 1.5 3 3 3-1.5 3-3"></path>
+                                <path d="M9 21v-5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v5"></path>
+                            </svg>
+                            <div style="font-weight: 400; font-size: 15px; color: #333; margin-bottom: 2px;">Um local de trabalho</div>
+                            <div style="font-size: 13px; color: #999;">Loja, escritório, comércio</div>
                             <input type="radio" name="tipo" id="radio_trabalho" value="trabalho" style="display: none;">
                         </div>
                     </div>
@@ -316,12 +324,12 @@ $textozap = isset($textozap) ? $textozap : '';
                     btn.addEventListener('click', function() {
                         tipoBotoes.forEach(b => {
                             b.classList.remove('active');
-                            b.style.borderColor = '#ddd';
-                            b.style.backgroundColor = '#fff';
+                            b.style.borderColor = '#E5E5E5';
+                            b.style.boxShadow = 'none';
                         });
                         this.classList.add('active');
-                        this.style.borderColor = 'var(--store-blue)';
-                        this.style.backgroundColor = '#f5f9ff';
+                        this.style.borderColor = '#3483FA';
+                        this.style.boxShadow = '0 0 0 0.5px #3483FA';
                     });
                 });
             });
