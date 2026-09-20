@@ -99,11 +99,16 @@ require_once("api/facebook_pixel.php");
             $cliques = $row1['cliques'];	
         }
 
-        // Registrar clique no produto (apenas uma vez por sessão)
-        if (!isset($_SESSION['product_click_' . $id])) {
+        // Registrar clique no produto (evitar bots e duplicidade via session e cookie)
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $is_bot = preg_match('/bot|crawl|spider|slurp|facebook|google/i', $user_agent);
+        $cookie_name = 'product_click_' . $id;
+        
+        if (!$is_bot && !isset($_SESSION[$cookie_name]) && !isset($_COOKIE[$cookie_name])) {
             $novoclick = $cliques + 1;
             mysqli_query($conn, "UPDATE produto SET cliques='$novoclick' WHERE id='$pid'");
-            $_SESSION['product_click_' . $id] = true;
+            $_SESSION[$cookie_name] = true;
+            setcookie($cookie_name, '1', time() + 86400 * 7, '/'); // Cookie válido por 7 dias
         }
         
 	        $valor_total = (float)str_replace(',', '.', str_replace('.', '', $valor));

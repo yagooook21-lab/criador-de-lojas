@@ -378,7 +378,7 @@ switch($acao){
         $r_code = mysqli_query($conn, "SELECT codigo FROM pix_tabela_codigos WHERE id='$codigo_id'");
         if ($r_code && $code_row = mysqli_fetch_assoc($r_code)) {
             $code_safe = mysqli_real_escape_string($conn, $code_row['codigo']);
-            mysqli_query($conn, "UPDATE pixgerado SET status='pago' WHERE pix_code='$code_safe'");
+            mysqli_query($conn, "UPDATE pixgerado SET status='pago' WHERE pix_code='$code_safe' AND status NOT IN ('pago','paid','approved','completed','success') ORDER BY id DESC LIMIT 1");
         }
         
         header('Content-Type: application/json; charset=utf-8');
