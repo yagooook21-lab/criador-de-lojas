@@ -1,1 +1,0 @@
-<?php require_once("api/db.php"); $res = mysqli_query($conn, "DESCRIBE pixgerado"); while($row = mysqli_fetch_assoc($res)){ echo $row["Field"] . ", "; } ?>
